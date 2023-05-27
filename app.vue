@@ -9,6 +9,7 @@
 <script setup lang="ts">
 import {useMainStore} from "~/stores/main";
 import {switchDarkMode, switchDarkModeAction} from "~/share/DarkMode";
+import {useRoute, useRouter} from "vue-router";
 
 useHead({
   charset: 'utf-8',
@@ -20,18 +21,29 @@ useHead({
   description: 'Secret'
 })
 
-const store = useMainStore()
-const darkMode = computed(() => store.dark)
+const mainStore = useMainStore()
+const darkMode = computed(() => mainStore.dark)
 
 onMounted(() => {
   //get data from storage
   if (localStorage.darkMode) {
-    store.updateCoreValue('dark', localStorage.darkMode)
+      mainStore.updateCoreValue('dark', localStorage.darkMode)
     switchDarkModeAction(darkMode.value)
   } else {
-    store.updateCoreValue('dark', switchDarkMode('2'))
+      mainStore.updateCoreValue('dark', switchDarkMode('2'))
   }
 })
+
+const router = useRouter()
+
+router.afterEach((to, from, next) => {
+    if (to.name !== from.name) {
+        mainStore.updateCoreValue('page', 0)
+    } else if (to.query.page && !isNaN(Number(to.query.page))) {
+        mainStore.updateCoreValue('page', Number(to.query.page))
+    }
+})
+
 </script>
 
 <style scoped>

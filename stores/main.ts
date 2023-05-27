@@ -5,7 +5,8 @@ export const useMainStore = defineStore('main', {
   state: (): State => ({
     dark: '0',
     globalHandle: null,
-    dataHandle: []
+    dataHandle: [],
+    page: 0,
   }),
   actions: {
     updateCoreValue<K extends keyof State>(key: K, value: State[K]) {

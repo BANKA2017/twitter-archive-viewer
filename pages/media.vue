@@ -23,11 +23,7 @@
                     </div>
                 </div>
                 <div class="w-full text-center">
-                    <div class="btn-group my-3">
-                        <button class="btn" @click="state.page--">«</button>
-                        <button class="btn">{{ state.page + Number(state.page >= 0) }}</button>
-                        <button class="btn" @click="state.page++">»</button>
-                    </div>
+                    <pagination :pages-count="Math.ceil(state.mediaFile.length / 100)"/>
                 </div>
             </div>
         </div>
@@ -39,30 +35,31 @@ import {useMainStore} from "~/stores/main";
 import {onMounted, reactive} from "vue";
 import {OpenNewPage, readFile, ScrollTo} from "~/share/Tools";
 import SideList from "~/components/SideList.vue";
+import {OnlineMedia} from "~/type/Content";
+import Pagination from "~/components/Pagination.vue";
 
 useHead({title: "Media"})
 
 const state = reactive<{
-    mediaFile: any[]
-    page: number
-    mediaList: any[]
+    mediaFile: OnlineMedia[]
+    mediaList: { blob: string; fileInfo: OnlineMedia; }[]
 }>({
     mediaFile: [],
-    page: 0,
     mediaList: []
 })
 
 const mainStore = useMainStore()
 const dataHandle = computed(() => mainStore.dataHandle)
 const globalHandle = computed(() => mainStore.globalHandle)
+const page = computed(() => mainStore.page)
 
 const router = useRouter()
 if (!globalHandle.value) {
     router.push('/')
 }
 
-const filterMedia = async () => {
-    const tmpList = [...new Set((state.mediaFile || []).filter(media => media.source === 'tweets' || media.source === 'quote_status').slice(state.page * 100, state.page === -1 ? undefined : state.page * 100 + 100))]
+const filterMedia = async (): Promise<{ blob: string; fileInfo: OnlineMedia; }[]> => {
+    const tmpList = state.mediaFile.slice(page.value * 100, page.value === -1 ? undefined : page.value * 100 + 100)
 
     const tmpBlob = []
     for (const media of tmpList) {
@@ -78,7 +75,7 @@ const filterMedia = async () => {
     return tmpBlob
 }
 
-watch(() => state.page, async () => {
+watch(page, async () => {
     ScrollTo(0)
     state.mediaList = await filterMedia()
 })
@@ -88,7 +85,7 @@ onMounted(async () => {
     console.log(tmpMediaFileHandle)
     if (tmpMediaFileHandle) {
         ScrollTo(0)
-        state.mediaFile = JSON.parse((await readFile(tmpMediaFileHandle[1])).content)
+        state.mediaFile = [...new Set((JSON.parse((await readFile(tmpMediaFileHandle[1])).content) || []).filter(media => media.source === 'tweets' || media.source === 'quote_status'))]
         console.log(state.mediafile)
         state.mediaList = await filterMedia()
     }

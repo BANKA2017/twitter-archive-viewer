@@ -40,11 +40,7 @@
                     </div>
                 </div>
                 <div class="w-full text-center">
-                    <div class="btn-group my-3">
-                        <button class="btn" @click="state.page--">«</button>
-                        <button class="btn">{{ state.page + Number(state.page >= 0) }}</button>
-                        <button class="btn" @click="state.page++">»</button>
-                    </div>
+                    <pagination :pages-count="Math.ceil(Object.keys(state.followingPageData).length / 100)"/>
                 </div>
             </div>
         </div>
@@ -56,15 +52,14 @@ import SideList from "~/components/SideList.vue";
 import {onMounted, reactive} from "vue";
 import {useMainStore} from "~/stores/main";
 import {readFile, ScrollTo} from "~/share/Tools";
+import Pagination from "~/components/Pagination.vue";
 
 useHead({title: "Following"})
 
 const state = reactive<{
-    page: number
     followingList: { [p in string]: any }
     followingPageData: { [p in string]: any }
 }>({
-    page: 0,
     followingList: {},
     followingPageData: {}
 })
@@ -72,6 +67,7 @@ const state = reactive<{
 const mainStore = useMainStore()
 const dataHandle = computed(() => mainStore.dataHandle)
 const globalHandle = computed(() => mainStore.globalHandle)
+const page = computed(() => mainStore.page)
 
 const router = useRouter()
 if (!globalHandle.value) {
@@ -79,10 +75,10 @@ if (!globalHandle.value) {
 }
 
 const filterFollowing = async () => {
-    return Object.fromEntries(Object.entries(state.followingList || {}).slice(state.page * 100, state.page === -1 ? undefined : state.page * 100 + 100))
+    return Object.fromEntries(Object.entries(state.followingList || {}).slice(page.value * 100, page.value === -1 ? undefined : page.value * 100 + 100))
 }
 
-watch(() => state.page, async () => {
+watch(page, async () => {
     ScrollTo(0)
     state.followingPageData = await filterFollowing()
 })

@@ -13,4 +13,5 @@ export interface State {
   dark: '0' | '1' | '2'
   globalHandle: FileSystemDirectoryHandle | null
   dataHandle: [string, FileSystemFileHandle][]
+  page: number
 }

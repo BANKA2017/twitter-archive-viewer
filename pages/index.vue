@@ -105,12 +105,8 @@
 
                     </div>
                     <div class="grid grid-cols-4 gap-5">
-                        <div class="w-full text-center col-span-4 lg:col-span-3">
-                            <div class="btn-group my-3">
-                                <button class="btn" @click="$router.push({query: {page: state.page-1}})">«</button>
-                                <button class="btn">{{ state.page + Number(state.page >= 0) }}</button>
-                                <button class="btn" @click="$router.push({query: {page: state.page+1}})">»</button>
-                            </div>
+                        <div class="w-full text-center col-span-4 lg:col-span-3 gap-5">
+                            <pagination :pages-count="Math.ceil(Object.keys(state.tweets).length / 20)" />
                         </div>
                     </div>
                 </div>
@@ -128,7 +124,7 @@ import {onMounted} from "vue";
 import Retweet from "~/components/icons/Retweet.vue";
 import Reply from "~/components/icons/Reply.vue";
 import Like from "~/components/icons/Like.vue";
-import {useRoute} from "vue-router";
+import Pagination from "~/components/Pagination.vue";
 
 useHead({title: "Archive"})
 
@@ -136,19 +132,18 @@ const state = reactive<{
     info: any
     tweets: { [p in string]: any }
     tweetsData: { [p in string]: any }
-    page: number
 }>({
     info: {},
     tweets: {},
     tweetsData: {},
-    page: 0
 })
 
 const mainStore = useMainStore()
 const globalHandle = computed(() => mainStore.globalHandle)
 const dataHandle = computed(() => mainStore.dataHandle)
+const page = computed(() => mainStore.page)
 
-const existBanner = computed(() => state.info.banner && state.info.banner !== 'blob://')
+const existBanner = computed(() => state.info.banner && state.info.banner !== 'about:blank')
 
 const getDate = (timestamp: number = 0) => {
     const tmpDate = new Date(timestamp)
@@ -157,7 +152,7 @@ const getDate = (timestamp: number = 0) => {
     return `${tmpDate.getHours()}:${(tmpDate.getMinutes()).toString().padStart(2, '0')} · ${tmpDate.getDate()} ${monthName[tmpDate.getMonth()]}, ${tmpDate.getFullYear()}`
 }
 const filterTweets = async () => {
-    return Object.fromEntries(Object.entries(state.tweets || {}).slice(state.page * 20, state.page === -1 ? undefined : state.page * 20 + 20))
+    return Object.fromEntries(Object.entries(state.tweets || {}).slice(page.value * 20, page.value === -1 ? undefined : page.value * 20 + 20))
 }
 watch(dataHandle, async () => {
     const test_filter = dataHandle.value.filter(x => x[0] === 'data.json')
@@ -172,29 +167,29 @@ watch(dataHandle, async () => {
     }
 })
 
-watch(() => state.page, async () => {
+watch(page, async () => {
     ScrollTo(0)
     state.tweetsData = await filterTweets()
 })
 
 watch(() => state.info, async () => {
     //banner
-    if (!state.info.banner.startsWith('blob://')) {
+    if (!state.info.banner.startsWith('about:blank')) {
         const banner = dataHandle.value.filter(x => x[0].startsWith(`banner_${state.info.uid_str}`))[0]
         if (banner) {
             state.info.banner = URL.createObjectURL(banner[1])
         } else {
-            state.info.banner = 'blob://'
+            state.info.banner = 'about:blank'
         }
     }
 
     //avatar
-    if (!state.info.header.startsWith('blob://')) {
+    if (!state.info.header.startsWith('about:blank')) {
         const avatar = dataHandle.value.filter(x => x[0].startsWith(`avatar_${state.info.uid_str}`))[0]
         if (avatar) {
             state.info.header = URL.createObjectURL(avatar[1])
         } else {
-            state.info.header = 'blob://'
+            state.info.header = 'about:blank'
         }
     }
 
@@ -213,15 +208,6 @@ onMounted(async () => {
     }
 })
 
-const route = useRoute()
-if (route.query.page && !isNaN(Number(route.query.page))) {
-    state.page = Number(route.query.page)
-}
-onBeforeRouteUpdate((to, from) => {
-    if (to.query.page && !isNaN(Number(to.query.page))) {
-        state.page = Number(to.query.page)
-    }
-})
 
 definePageMeta({
     layout: "archive-viewer",
