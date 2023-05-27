@@ -177,7 +177,7 @@ watch(() => state.info, async () => {
     if (!state.info.banner.startsWith('about:blank')) {
         const banner = dataHandle.value.filter(x => x[0].startsWith(`banner_${state.info.uid_str}`))[0]
         if (banner) {
-            state.info.banner = URL.createObjectURL(banner[1])
+            state.info.banner = URL.createObjectURL(banner[1].getFile ? await banner[1].getFile() : banner[1])
         } else {
             state.info.banner = 'about:blank'
         }
@@ -187,7 +187,7 @@ watch(() => state.info, async () => {
     if (!state.info.header.startsWith('about:blank')) {
         const avatar = dataHandle.value.filter(x => x[0].startsWith(`avatar_${state.info.uid_str}`))[0]
         if (avatar) {
-            state.info.header = URL.createObjectURL(avatar[1])
+            state.info.header = URL.createObjectURL(avatar[1].getFile ? await avatar[1].getFile() : avatar[1])
         } else {
             state.info.header = 'about:blank'
         }
