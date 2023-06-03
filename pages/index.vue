@@ -16,7 +16,7 @@
                                 <h5 class="text-lg font-bold">{{ state.info.display_name }}</h5>
                                 <a :href="`https://twitter.com/`+state.info.name" class="block hover:underline-offset-1 hover:underline " target="_blank">@{{ state.info.name }}</a>
                             </div>
-                            <full-text v-if="state.info.description" :full_text_origin="state.info.description" :entities="state.info.entities" class="px-5 pb-5"/>
+                            <full-text v-if="state.info.description_origin" :full_text_origin="state.info.description_origin" :entities="state.info.description_entities" class="px-5 pb-5"/>
                         </div>
                         <div class="stats lg:stats-vertical shadow col-span-4 lg:col-span-1">
                             <div class="stat place-items-center">
@@ -47,7 +47,8 @@
                                             {{ tweet.retweet_from }}</a>
                                         <a v-else-if="tweet.conversation_id_str !== tweet.tweet_id" :href="`https://twitter.com/`+tweet.retweet_from_name" class="inline-block mr-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">Reply</a>
                                         <a v-if="Object.keys(tweet.quoteObject).length" :href="`https://twitter.com/i/status/`+tweet.quoteObject.tweet_id" class="inline-block mr-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">Quote</a>
-                                        <span v-if="Object.keys(tweet.cardObject).length" class="inline-block mr-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">Card</span>
+                                        <span v-if="Object.keys(tweet.cardObject).length && !['periscope_broadcast', 'broadcast', 'audiospace'].includes(tweet.cardObject.type)" class="inline-block mr-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">Card</span>
+                                        <a v-else-if="Object.keys(tweet.cardObject).length && ['periscope_broadcast', 'broadcast', 'audiospace'].includes(tweet.cardObject.type)" :href="tweet.cardObject.url" class="inline-block mr-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">{{ tweet.cardObject.type === 'audiospace' ? 'Space' : 'Broadcast' }}</a>
                                     </div>
                                     <a :href="`https://twitter.com/i/status/`+tweet.conversation_id_str" class="hover:underline underline-offset-1 text-sm font-mono" target="_blank"><span class="font-bold mr-1">CONVERSATION</span>{{ tweet.conversation_id_str }}</a>
                                 </div>
