@@ -1,15 +1,16 @@
 <template>
     <div class="mt-4">
-        <div class="flex items-center justify-between">
-            <div class="text-4xl py-1 font-bold bg-clip-text">
-                <router-link class="inline-block mr-2 dark:text-white" to="/">Archive</router-link>
+        <div class="flex items-center">
+            <div class="text-4xl py-1 font-bold bg-clip-text grow">
+                <router-link class="inline-block mr-2 text-black dark:text-white" to="/">Archive</router-link>
                 <span
                     :class="{'select-none': true, 'text-white': true, 'px-2': true, 'rounded-2xl': true, 'text-sm': true, 'bg-sky-500': true}">test</span>
             </div>
             <button v-if="globalHandle"
-                    class="rounded-md bg-sky-500 text-white border-sky-500 hover:bg-sky-600 transition-colors px-3 py-2"
+                    class="flex-none rounded-md bg-slate-100 hover:bg-sky-100 dark:bg-slate-800 dark:hover:bg-sky-900 text-black dark:text-white border-sky-500 transition-colors px-3 py-2 mr-2"
                     @click="cleanAll">CLEAN
             </button>
+            <dark-button class="flex-none" />
         </div>
     </div>
 </template>

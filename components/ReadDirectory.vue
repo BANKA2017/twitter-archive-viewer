@@ -64,7 +64,7 @@ const dropEvent = async (e: DragEvent) => {
 </script>
 
 <template>
-    <div class="border-4 border-dotted h-full min-h-[200px] align-middle text-center cursor-pointer"
+    <div class="border-4 dark:border-white border-gray-800 border-dotted h-full min-h-[200px] align-middle text-center cursor-pointer"
          @click="clickEvent" @dragenter="preventDrag" @dragover="preventDrag" @drop="dropEvent">
         drop folder(Chromium only) or click(All browser) to read archive folder
     </div>

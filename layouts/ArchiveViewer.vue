@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <div class="min-h-screen dark:bg-black">
+        <div class="min-h-screen bg-white dark:bg-black text-black dark:text-white">
             <div class="grid grid-cols-12 gap-4">
                 <div class="col-start-1 col-span-12 md:col-start-2 md:col-span-10">
                     <div class="mx-4 md:mx-1">

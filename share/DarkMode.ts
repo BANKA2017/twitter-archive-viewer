@@ -24,19 +24,23 @@ const switchDarkModeAction = (darkMode: darkModeType = "0"): void => {
         if (document.documentElement.classList.value === '') {
           document.documentElement.classList.add('dark')
         }
+        document.documentElement.setAttribute('data-theme', 'dark')
       } else {
         document.documentElement.classList.remove('dark')
+        document.documentElement.setAttribute('data-theme', 'light')
       }
       break
     case "1":
       if (document.documentElement.classList.value !== '') {
         document.documentElement.classList.remove('dark')
       }
+      document.documentElement.setAttribute('data-theme', 'light')
       break
     case "2":
       if (document.documentElement.classList.value === '') {
         document.documentElement.classList.add('dark')
       }
+      document.documentElement.setAttribute('data-theme', 'dark')
       break
   }
 }

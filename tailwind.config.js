@@ -9,6 +9,9 @@ module.exports = {
     "./app.vue",
   ],
   darkMode: 'class',
+  daisyui: {
+    themes: ["light", "dark"],
+  },
   theme: {
     extend: {},
   },

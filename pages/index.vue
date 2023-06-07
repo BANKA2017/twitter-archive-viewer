@@ -36,20 +36,23 @@
 
                         </div>
                     </div>
-
+                    <!--filter-->
+                    <div id="filter" class="w-full ">
+                        <div v-for="(filterValue, filterKey) in state.filter" :key="filterKey" :class="{'rounded-full': true, 'px-3': true, 'py-1': true, 'mr-2': true, 'mb-1': true, 'border-2': true, 'hover:text-white': true, 'text-white': filterValue, 'dark:text-white': true, 'border-sky-500': true, 'hover:border-sky-600': true, 'bg-sky-500': filterValue, 'bg-transparent': !filterValue, 'hover:bg-sky-600': true, 'transition-colors': true, 'inline-block': true, 'cursor-pointer': true,}" @click="state.filter[filterKey] = !state.filter[filterKey]">{{ filterKey }}</div>
+                    </div>
                     <!--tweets-->
                     <div v-for="tweet in state.tweetsData" :key="tweet.tweet_id" class="grid grid-cols-4 gap-5 ">
                         <div class="col-span-4 lg:col-span-3 my-2">
                             <div class="p-5 bg-gray-100 dark:bg-gray-900 rounded-xl">
                                 <div class="py-1 flex justify-between">
-                                    <div class="">
-                                        <a v-if="tweet.retweet_from_name" :href="`https://twitter.com/`+tweet.retweet_from_name" class="inline-block mr-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">RT
+                                    <div class="text-white">
+                                        <a v-if="tweet.retweet_from_name" :href="`https://twitter.com/`+tweet.retweet_from_name" target="_blank" class="inline-block mr-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">RT
                                             {{ tweet.retweet_from }}</a>
-                                        <a v-else-if="tweet.conversation_id_str !== tweet.tweet_id" :href="`https://twitter.com/`+tweet.retweet_from_name" class="inline-block mr-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">Reply</a>
-                                        <a v-if="Object.keys(tweet.quoteObject).length" :href="`https://twitter.com/i/status/`+tweet.quoteObject.tweet_id" class="inline-block mr-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">Quote</a>
+                                        <a v-else-if="tweet.conversation_id_str !== tweet.tweet_id" :href="`https://twitter.com/`+tweet.retweet_from_name" target="_blank" class="inline-block mr-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">Reply</a>
+                                        <a v-if="Object.keys(tweet.quoteObject).length" target="_blank" :href="`https://twitter.com/i/status/`+tweet.quoteObject.tweet_id" class="inline-block mr-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">Quote</a>
                                         <span v-if="Object.keys(tweet.cardObject).length && !['periscope_broadcast', 'broadcast', 'audiospace'].includes(tweet.cardObject.type)" class="inline-block mr-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">Card</span>
-                                        <a v-else-if="Object.keys(tweet.cardObject).length && ['periscope_broadcast', 'broadcast'].includes(tweet.cardObject.type)" :href="tweet.cardObject.url" class="inline-block mr-1 text-sm border-2 border-[#F91880] rounded-full max-w-[15em]"><span class="bg-[#F91880] px-2 rounded-l-full ">Broadcast</span><span class=" px-2">{{ tweet.broadcastObject.total }}</span></a>
-                                        <a v-else-if="Object.keys(tweet.cardObject).length && ['audiospace'].includes(tweet.cardObject.type)" :href="'https://twitter.com/i/spaces/'+tweet.cardObject.url" class="inline-block mr-1 text-sm border-2 border-[#9C63FA] rounded-full max-w-[15em]"><span class="bg-[#9C63FA] px-2 rounded-l-full ">Space</span><span class=" px-2">{{ tweet.audiospaceObject.total }}</span></a>
+                                        <a v-else-if="Object.keys(tweet.cardObject).length && ['periscope_broadcast', 'broadcast'].includes(tweet.cardObject.type)" :href="tweet.cardObject.url" target="_blank" class="inline-block mr-1 text-sm border-2 border-[#F91880] rounded-full max-w-[15em]"><span class="bg-[#F91880] px-2 rounded-l-full ">Broadcast</span><span class="text-black dark:text-white px-2">{{ tweet.broadcastObject.total }}</span></a>
+                                        <a v-else-if="Object.keys(tweet.cardObject).length && ['audiospace'].includes(tweet.cardObject.type)" :href="'https://twitter.com/i/spaces/'+tweet.cardObject.url" target="_blank" class="inline-block mr-1 text-sm border-2 border-[#9C63FA] rounded-full max-w-[15em]"><span class="bg-[#9C63FA] px-2 rounded-l-full ">Space</span><span class="text-black dark:text-white px-2">{{ tweet.audiospaceObject.total }}</span></a>
                                     </div>
                                     <a :href="`https://twitter.com/i/status/`+tweet.conversation_id_str" class="hover:underline underline-offset-1 text-sm font-mono" target="_blank"><span class="font-bold mr-1">CONVERSATION</span>{{ tweet.conversation_id_str }}</a>
                                 </div>
@@ -78,7 +81,7 @@
                                     </div>
                                 </div>
                                 <!--quote-->
-                                <div v-if="Object.keys(tweet.quoteObject).length" class="my-2 p-5 rounded-xl bg-gray-800">
+                                <div v-if="Object.keys(tweet.quoteObject).length" class="my-2 p-5 rounded-xl bg-gray-200 dark:bg-gray-800">
                                     <div class="py-1 flex justify-between">
                                         <div class="">
                                             <!--TODO retweet-->
@@ -133,17 +136,25 @@ import Retweet from "~/components/icons/Retweet.vue";
 import Reply from "~/components/icons/Reply.vue";
 import Like from "~/components/icons/Like.vue";
 import Pagination from "~/components/Pagination.vue";
+import {Tweet} from "~/type/Content";
 
 useHead({title: "Archive"})
 
 const state = reactive<{
     info: any
-    tweets: { [p in string]: any }
+    tweets: { [p in string]: Tweet }
     tweetsData: { [p in string]: any }
+    filter: {[p in string]: boolean}
 }>({
     info: {},
     tweets: {},
     tweetsData: {},
+    filter: {
+        Reply: false,
+        Media: false,
+        Broadcast: false,
+        AudioSpace: false
+    }
 })
 
 const mainStore = useMainStore()
@@ -160,7 +171,17 @@ const getDate = (timestamp: number = 0) => {
     return `${tmpDate.getHours()}:${(tmpDate.getMinutes()).toString().padStart(2, '0')} · ${tmpDate.getDate()} ${monthName[tmpDate.getMonth()]}, ${tmpDate.getFullYear()}`
 }
 const filterTweets = async () => {
-    return Object.fromEntries(Object.entries(state.tweets || {}).slice(page.value * 20, page.value === -1 ? undefined : page.value * 20 + 20))
+    if (Object.keys(state.tweets).length <= 0) {
+        return []
+    }
+    return Object.fromEntries(Object.entries(state.tweets).filter(tweet => {
+        if (!Object.entries(state.filter).some(x => x[1])) {return true}
+        else if (state.filter.Reply && tweet[1].conversation_id_str !== tweet[1].tweet_id) {return true}
+        else if (state.filter.Media && tweet[1].mediaObject && tweet[1].mediaObject.some(x => x.source === 'tweets')) {return true}
+        else if (state.filter.Broadcast && ['periscope_broadcast', 'broadcast'].includes(tweet[1].cardObject.type)) {return true}
+        else if (state.filter.AudioSpace && ['audiospace'].includes(tweet[1].cardObject.type)) {return true}
+        return false
+    }).slice(page.value * 20, page.value === -1 ? undefined : page.value * 20 + 20))
 }
 watch(dataHandle, async () => {
     const test_filter = dataHandle.value.filter(x => x[0] === 'data.json')
@@ -179,6 +200,11 @@ watch(page, async () => {
     ScrollTo(0)
     state.tweetsData = await filterTweets()
 })
+
+watch(state.filter, async () => {
+    ScrollTo(0)
+    state.tweetsData = await filterTweets()
+}, {deep: true})
 
 watch(() => state.info, async () => {
     //banner
