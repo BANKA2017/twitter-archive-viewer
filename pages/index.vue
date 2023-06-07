@@ -48,7 +48,8 @@
                                         <a v-else-if="tweet.conversation_id_str !== tweet.tweet_id" :href="`https://twitter.com/`+tweet.retweet_from_name" class="inline-block mr-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">Reply</a>
                                         <a v-if="Object.keys(tweet.quoteObject).length" :href="`https://twitter.com/i/status/`+tweet.quoteObject.tweet_id" class="inline-block mr-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">Quote</a>
                                         <span v-if="Object.keys(tweet.cardObject).length && !['periscope_broadcast', 'broadcast', 'audiospace'].includes(tweet.cardObject.type)" class="inline-block mr-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">Card</span>
-                                        <a v-else-if="Object.keys(tweet.cardObject).length && ['periscope_broadcast', 'broadcast', 'audiospace'].includes(tweet.cardObject.type)" :href="tweet.cardObject.url" class="inline-block mr-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">{{ tweet.cardObject.type === 'audiospace' ? 'Space' : 'Broadcast' }}</a>
+                                        <a v-else-if="Object.keys(tweet.cardObject).length && ['periscope_broadcast', 'broadcast'].includes(tweet.cardObject.type)" :href="tweet.cardObject.url" class="inline-block mr-1 text-sm border-2 border-[#F91880] rounded-full max-w-[15em]"><span class="bg-[#F91880] px-2 rounded-l-full ">Broadcast</span><span class=" px-2">{{ tweet.broadcastObject.total }}</span></a>
+                                        <a v-else-if="Object.keys(tweet.cardObject).length && ['audiospace'].includes(tweet.cardObject.type)" :href="'https://twitter.com/i/spaces/'+tweet.cardObject.url" class="inline-block mr-1 text-sm border-2 border-[#9C63FA] rounded-full max-w-[15em]"><span class="bg-[#9C63FA] px-2 rounded-l-full ">Space</span><span class=" px-2">{{ tweet.audiospaceObject.total }}</span></a>
                                     </div>
                                     <a :href="`https://twitter.com/i/status/`+tweet.conversation_id_str" class="hover:underline underline-offset-1 text-sm font-mono" target="_blank"><span class="font-bold mr-1">CONVERSATION</span>{{ tweet.conversation_id_str }}</a>
                                 </div>
@@ -92,13 +93,19 @@
                                         <tweet-image :list="tweet.mediaObject.filter(x => x.source === 'quote_status')"/>
                                     </div>
                                 </div>
+                                <div v-if="tweet.broadcastObject" >
+                                    <tw-broadcast :broadcast-object="tweet.broadcastObject" />
+                                </div>
+                                <div v-if="tweet.audiospaceObject" >
+                                    <tw-audio-space :audiospace-object="tweet.audiospaceObject" />
+                                </div>
                                 <p class="font-light dark:text-gray-300 text-gray-700 text-md">
                                     {{ (getDate(tweet.time * 1000)) }}</p>
                                 <div class="mt-1" v-if="((tweet.retweet_count + tweet.quote_count + tweet.favorite_count) > 0)">
                                     <div class="flex justify-start">
-                                        <span class="mr-4 text-gary-800 " v-if="tweet.retweet_count > 0"><retweet height="1.1rem" width="1.1rem" status="text-success mr-1 inline-block"/><span>{{ tweet.retweet_count }}</span></span>
-                                        <span class="mr-4 text-gary-800 " v-if="tweet.reply_count > 0"><reply height="1.1rem" width="1.1rem" status="text-primary mr-1 inline-block"/><span>{{ tweet.reply_count }}</span></span>
-                                        <span class="mr-4 text-gary-800 " v-if="tweet.favorite_count > 0"><like height="1.1rem" width="1.1rem" status="text-error mr-1 inline-block"/><span>{{ tweet.favorite_count }}</span></span>
+                                        <span class="mr-4 text-gary-800 " v-if="tweet.retweet_count > 0"><retweet height="1.1rem" width="1.1rem" status="text-[#1D9BF0] mr-1 inline-block"/><span>{{ tweet.retweet_count }}</span></span>
+                                        <span class="mr-4 text-gary-800 " v-if="tweet.reply_count > 0"><reply height="1.1rem" width="1.1rem" status="text-[#00BA7C] mr-1 inline-block"/><span>{{ tweet.reply_count }}</span></span>
+                                        <span class="mr-4 text-gary-800 " v-if="tweet.favorite_count > 0"><like height="1.1rem" width="1.1rem" status="text-[#F91880] mr-1 inline-block"/><span>{{ tweet.favorite_count }}</span></span>
                                     </div>
                                 </div>
                             </div>

@@ -69,6 +69,8 @@ export interface Tweet {
   mediaObject: Media[]
   user_info?: UserInfo
   retweet_user_info?: UserInfo
+  broadcastObject?: LiveVideoContent
+  audiospaceObject?: AudioSpace
 }
 
 export interface RichText {

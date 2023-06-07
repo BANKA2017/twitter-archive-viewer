@@ -196,4 +196,10 @@ const contentObjectBuilder = () => {
 onMounted(() => {
     state.textObject = contentObjectBuilder()
 })
+
+const computedFullText = computed(() => props.full_text_origin)
+
+watch(computedFullText, () => {
+    state.textObject = contentObjectBuilder()
+})
 </script>
