@@ -3,8 +3,8 @@
         <div v-if="state.audiospaceUrl">
             <audio class="w-full" :src="state.audiospaceUrl" controls />
         </div>
-        <div v-else class="rounded-xl w-full p-3 bg-gray-200 dark:bg-gray-800 my-2">Local audio is <span class="font-bold">NOT</span> available, please listen <a :href="'https://twitter.com/i/spaces/' + audiospaceObject.id" target="_blank" class="underline-offset-2 underline text-sky-500">online</a> </div>
-        <div class="rounded-xl w-full p-3 bg-gray-200 dark:bg-gray-800 my-2">
+        <div v-else class="rounded-xl w-full p-3 bg-gray-200 dark:bg-gray-800 my-2">Local audio is <span class="font-bold">NOT</span> available, please listen <a :href="'https://twitter.com/i/spaces/' + cardObject.url" target="_blank" class="underline-offset-2 underline text-sky-500">online</a> </div>
+        <div v-if="audiospaceObject.title" class="rounded-xl w-full p-3 bg-gray-200 dark:bg-gray-800 my-2">
             {{audiospaceObject.title}}
         </div>
     </div>
@@ -13,10 +13,14 @@
 <script setup lang="ts">
 
     import {PropType} from "vue";
-    import {AudioSpace} from "~/type/Content";
+    import {AudioSpace, Card} from "~/type/Content";
     import {useMainStore} from "~/stores/main";
 
     const props = defineProps({
+        cardObject: {
+            type: Object as PropType<Card>,
+            default: {}
+        },
         audiospaceObject: {
             type: Object as PropType<AudioSpace>,
             default: {}

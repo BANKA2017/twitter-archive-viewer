@@ -1,5 +1,5 @@
 <template>
-    <div v-if="loading" class="fixed right-3 top-5">
+    <div v-if="state.loading" class="fixed right-3 top-5">
         <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-teal-400 dark:text-white" fill="none"
              viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -10,18 +10,20 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, onMounted} from "vue"
+import {onMounted} from "vue"
 import {onBeforeRouteLeave} from "vue-router"
-import {useMainStore} from "~/stores/main";
 
-const store = useMainStore()
-const loading = computed(() => store.loading)
+const state = reactive<{
+    loading: boolean
+}>({
+    loading: true
+})
 
 onMounted(() => {
-    store.updateCoreValue('loading', false)
+    state.loading = false
 })
 onBeforeRouteLeave(() => {
-    store.updateCoreValue('loading', true)
+    state.loading = true
 })
 
 </script>

@@ -13,10 +13,10 @@
                                 <a :href="`https://twitter.com/`+accountData.name" target="_blank">@{{ accountData.name }}</a>
                             </div>
                             <div class="text-sm basis-1/5 lg:hidden">
-                                <div class="rounded-full px-2 py-0.5 mx-1 my-1 bg-sky-500 dark:bg-sky-700">Following:
+                                <div class="rounded-full px-2 py-0.5 mx-1 my-1 text-white bg-sky-500 dark:bg-sky-700">Following:
                                     {{ accountData.following }}
                                 </div>
-                                <div class="rounded-full px-2 py-0.5 mx-1 my-1 bg-sky-500 dark:bg-sky-700">Followers:
+                                <div class="rounded-full px-2 py-0.5 mx-1 my-1 text-white bg-sky-500 dark:bg-sky-700">Followers:
                                     {{ accountData.followers }}
                                 </div>
                             </div>
