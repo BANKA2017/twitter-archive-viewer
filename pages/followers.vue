@@ -5,6 +5,14 @@
                 <side-list/>
             </div>
             <div class="col-span-4 md:col-span-3">
+                <div v-if="Object.keys(state.followersPageData).length === 0" class="flex justify-center">
+                    <svg class="animate-spin -ml-1 mr-3 h-10 w-10 text-teal-400 dark:text-white" fill="none"
+                         viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              fill="currentColor"></path>
+                    </svg>
+                </div>
                 <div class="grid grid-cols-4 gap-5" v-for="accountData in state.followersPageData" :key="accountData.id_str">
                     <div class="dark:bg-gray-900 bg-gray-100 rounded-xl p-5 mb-3 col-span-4 lg:col-span-3">
                         <div class="flex flex-row">
@@ -13,12 +21,8 @@
                                 <a :href="`https://twitter.com/`+accountData.name" target="_blank">@{{ accountData.name }}</a>
                             </div>
                             <div class="text-sm basis-1/5 lg:hidden">
-                                <div class="rounded-full px-2 py-0.5 mx-1 my-1 text-white bg-sky-500 dark:bg-sky-700">Following:
-                                    {{ accountData.following }}
-                                </div>
-                                <div class="rounded-full px-2 py-0.5 mx-1 my-1 text-white bg-sky-500 dark:bg-sky-700">Followers:
-                                    {{ accountData.followers }}
-                                </div>
+                                <div class="inline-block mr-1 mb-1 text-sm border-2 border-sky-500 rounded-full max-w-[15em] w-full"><span class="bg-sky-500 px-2 rounded-full text-white">Following</span><span class="text-black dark:text-white px-2 w-full">{{ accountData.following }}</span></div>
+                                <div class="inline-block mr-1 text-sm border-2 border-[#F91880] rounded-full max-w-[15em] w-full"><span class="bg-[#F91880] px-2 rounded-full text-white">Followers</span><span class="text-black dark:text-white px-2 w-full">{{ accountData.followers }}</span></div>
                             </div>
                         </div>
 
@@ -27,7 +31,7 @@
                         </div>
 
                     </div>
-                    <div class="stats stats-vertical shadow hidden lg:block lg:col-span-1 mb-3">
+                    <div class="stats stats-vertical bg-gray-100 dark:bg-gray-900 hidden lg:block lg:col-span-1 mb-3">
                         <div class="stat place-items-center">
                             <div class="stat-title">Followers</div>
                             <div class="stat-value">{{ accountData.followers }}</div>
@@ -40,7 +44,7 @@
                     </div>
                 </div>
                 <div class="w-full text-center">
-                    <pagination :pages-count="Math.ceil(Object.keys(state.followersPageData).length / 100)"/>
+                    <pagination :pages-count="Math.ceil(Object.keys(state.followersList).length / 100)"/>
                 </div>
             </div>
         </div>

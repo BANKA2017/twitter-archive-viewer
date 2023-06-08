@@ -26,7 +26,7 @@
                             </div>
                             <full-text v-if="state.info.description_origin" :full_text_origin="state.info.description_origin" :entities="state.info.description_entities" class="px-5 pb-5"/>
                         </div>
-                        <div class="stats lg:stats-vertical shadow col-span-4 lg:col-span-1">
+                        <div class="stats lg:stats-vertical col-span-4 lg:col-span-1 bg-gray-100 dark:bg-gray-900">
                             <div class="stat place-items-center">
                                 <div class="stat-title">Followers</div>
                                 <div class="stat-value">{{ state.info.followers }}</div>
@@ -125,7 +125,7 @@
                     </div>
                     <div class="grid grid-cols-4 gap-5">
                         <div class="w-full text-center col-span-4 lg:col-span-3 gap-5">
-                            <pagination :pages-count="Math.ceil(Object.keys(state.tweets).length / 20)" />
+                            <pagination :pages-count="state.pageTotal" />
                         </div>
                     </div>
                 </div>
@@ -150,6 +150,7 @@ useHead({title: "Archive"})
 
 const state = reactive<{
     info: any
+    pageTotal: number
     tweets: { [p in string]: Tweet }
     tweetsData: { [p in string]: any }
     filter: {[p in string]: boolean}
@@ -157,6 +158,7 @@ const state = reactive<{
     info: {},
     tweets: {},
     tweetsData: {},
+    pageTotal: 0,
     filter: {
         Reply: false,
         Media: false,
@@ -182,14 +184,17 @@ const filterTweets = async () => {
     if (Object.keys(state.tweets).length <= 0) {
         return []
     }
-    return Object.fromEntries(Object.entries(state.tweets).filter(tweet => tweet[1].name === state.info.name).filter(tweet => {
+    const tmpTweets = Object.entries(state.tweets).filter(tweet => tweet[1].name === state.info.name).filter(tweet => {
         if (!Object.entries(state.filter).some(x => x[1])) {return true}
         else if (state.filter.Reply && tweet[1].conversation_id_str !== tweet[1].tweet_id) {return true}
         else if (state.filter.Media && tweet[1].mediaObject && tweet[1].mediaObject.some(x => x.source === 'tweets')) {return true}
         else if (state.filter.Broadcast && ['periscope_broadcast', 'broadcast'].includes(tweet[1].cardObject.type)) {return true}
         else if (state.filter.AudioSpace && ['audiospace'].includes(tweet[1].cardObject.type)) {return true}
         return false
-    }).sort((a, b) => b[1].time - a[1].time).slice(page.value * 20, page.value === -1 ? undefined : page.value * 20 + 20))
+    }).sort((a, b) => b[1].time - a[1].time)
+    state.pageTotal = Math.ceil(tmpTweets.length / 20)
+
+    return Object.fromEntries(tmpTweets.slice(page.value * 20, page.value === -1 ? undefined : page.value * 20 + 20))
 }
 watch(dataHandle, async () => {
     const test_filter = dataHandle.value.filter(x => x[0] === 'data.json')
