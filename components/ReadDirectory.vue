@@ -2,6 +2,7 @@
 
 import {useMainStore} from "~/stores/main";
 import {directoryOpen} from "browser-fs-access";
+import {onMounted} from "vue";
 
 const mainStore = useMainStore()
 const dataHandle = computed(() => mainStore.dataHandle)
@@ -61,12 +62,16 @@ const dropEvent = async (e: DragEvent) => {
         }
     }
 }
+const isChrome = ref<boolean>(false)
+onMounted(() => {
+    isChrome.value = window.chrome
+})
 </script>
 
 <template>
-    <div class="border-4 dark:border-white border-gray-800 border-dotted h-full min-h-[200px] align-middle text-center cursor-pointer"
+    <div class="border-4 border-dashed dark:border-gray-400 dark:hover:border-white border-gray-800 transition-all hover:bg-gray-100 hover:dark:bg-gray-900 hover:border-dotted h-full min-h-[200px] text-center cursor-pointer"
          @click="clickEvent" @dragenter="preventDrag" @dragover="preventDrag" @drop="dropEvent">
-        drop folder(Chromium only) or click(All browser) to read archive folder
+        <div class="py-24 text-2xl">{{ isChrome ? 'Drop or Click' : 'Click' }}</div>
     </div>
 </template>
 

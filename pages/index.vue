@@ -5,7 +5,12 @@
                 <side-list/>
             </div>
             <div class="col-span-4 md:col-span-3">
-                <read-directory v-if="!globalHandle"/>
+                <div v-if="!globalHandle" class="w-full">
+                    <read-directory/>
+                    <!--<div class="mt-3 rounded-xl bg-gray-100 dark:bg-gray-900 p-3" >
+                        ..
+                    </div>-->
+                </div>
                 <div v-else-if="Object.keys(state.tweets).length === 0" class="flex justify-center">
                     <svg class="animate-spin -ml-1 mr-3 h-10 w-10 text-teal-400 dark:text-white" fill="none"
                          viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
