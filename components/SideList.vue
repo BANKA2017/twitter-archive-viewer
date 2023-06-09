@@ -38,7 +38,7 @@ for (const index in nameList) {
             </router-link>
         </template>
 
-        <div class="text-sm text-gray-500 text-center my-5">A Twitter Monitor Project</div>
+        <div class="text-sm text-gray-500 text-center my-5 hidden md:block">A Twitter Monitor Project</div>
     </div>
 </template>
 

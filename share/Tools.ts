@@ -1,3 +1,6 @@
+import * as zip from "@zip.js/zip.js";
+import {Entry} from "@zip.js/zip.js";
+
 const ScrollTo = (top: number = 0): void => {
   window.scrollTo({
     top: top,
@@ -15,19 +18,31 @@ const Download = (url: string, fileName: string) => {
   document.body.removeChild(element);
 }
 
-const readFile = async (fileHandle: FileSystemFileHandle, type: 'text' | 'blob' = 'text') => {
+const readFile = async (fileHandle: FileSystemFileHandle | Entry, type: 'text' | 'blob' = 'text') => {
   return await new Promise(async (resolve, reject) => {
     let file
-    if (fileHandle?.handle?.getFile) {
+    if ("handle" in fileHandle && "getFile" in fileHandle.handle) {
       file = await fileHandle.handle.getFile()
-    } else if (fileHandle?.getFile) {
+    } else if ("getFile" in fileHandle) {
       file = await fileHandle.getFile()
-    } else {
+    } else if ("getData" in fileHandle) {
+      if (type === "text") {
+        resolve({content: await fileHandle.getData(new zip.TextWriter(), {}), handle: fileHandle})
+      } else {
+        resolve({content: await fileHandle.getData(new zip.BlobWriter(), {}), handle: fileHandle})
+      }
+    } else if (("text" in fileHandle && type === 'text') || ("blob" in fileHandle && type === 'blob')) {
+      console.log(fileHandle.text, fileHandle.blob)
       if (type === "text") {
         resolve({content: await fileHandle.text(), handle: fileHandle})
       } else {
         resolve({content: await fileHandle.blob(), handle: fileHandle})
       }
+    }
+
+    if (!file) {
+      reject({content: null, handle: fileHandle})
+      return
     }
     let reader = new FileReader();
     reader.readAsArrayBuffer(file)

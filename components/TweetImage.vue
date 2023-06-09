@@ -20,7 +20,7 @@
 import {OnlineMedia} from "~/type/Content";
 import {onMounted, PropType} from "vue";
 import {useMainStore} from "~/stores/main";
-import {OpenNewPage} from "~/share/Tools";
+import {OpenNewPage, readFile} from "~/share/Tools";
 
 const props = defineProps({
     mediaStatus: {
@@ -61,7 +61,7 @@ onMounted(async () => {
     for (const media of tmpList) {
         const file = dataHandle.value.filter(x => x[0] === media.basename)[0]
         if (file) {
-            media.url = URL.createObjectURL(file[1].getFile ? await file[1].getFile() : file[1])
+            media.url = URL.createObjectURL(file[1].getFile ? await file[1].getFile() : (file[1].getData ? (await readFile(file[1], 'blob')).content : file[1]))
             tmpRealList.push(media)
         }
     }

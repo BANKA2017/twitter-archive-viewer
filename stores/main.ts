@@ -7,6 +7,7 @@ export const useMainStore = defineStore('main', {
     globalHandle: null,
     dataHandle: [],
     page: 0,
+    zipMode: false,
   }),
   actions: {
     updateCoreValue<K extends keyof State>(key: K, value: State[K]) {

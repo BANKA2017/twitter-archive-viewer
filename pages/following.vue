@@ -5,13 +5,11 @@
                 <side-list/>
             </div>
             <div class="col-span-4 md:col-span-3">
-                <div v-if="Object.keys(state.followingPageData).length === 0" class="flex justify-center">
-                    <svg class="animate-spin -ml-1 mr-3 h-10 w-10 text-teal-400 dark:text-white" fill="none"
-                         viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                              fill="currentColor"></path>
-                    </svg>
+                <div v-if="Object.keys(state.followingPageData).length === 0 && !state.init" class="flex justify-center">
+                    <loading-icon />
+                </div>
+                <div v-if="Object.keys(state.followingPageData).length === 0 && state.init" class="text-center text-2xl p-3 my-3 rounded-xl bg-gray-100 dark:bg-gray-900">
+                    Empty
                 </div>
                 <div class="grid grid-cols-4 gap-5" v-for="accountData in state.followingPageData" :key="accountData.id_str">
                     <div class="dark:bg-gray-900 bg-gray-100 rounded-xl p-5 mb-3 col-span-4 lg:col-span-3">
@@ -57,15 +55,18 @@ import {onMounted, reactive} from "vue";
 import {useMainStore} from "~/stores/main";
 import {readFile, ScrollTo} from "~/share/Tools";
 import Pagination from "~/components/Pagination.vue";
+import LoadingIcon from "~/components/LoadingIcon.vue";
 
 useHead({title: "Following"})
 
 const state = reactive<{
     followingList: { [p in string]: any }
-    followingPageData: { [p in string]: any }
+    followingPageData: { [p in string]: any },
+    init: boolean
 }>({
     followingList: {},
-    followingPageData: {}
+    followingPageData: {},
+    init: false
 })
 
 const mainStore = useMainStore()
@@ -96,6 +97,7 @@ onMounted(async () => {
         console.log(state.followingList)
         state.followingPageData = await filterFollowing()
     }
+    state.init = true
 })
 
 definePageMeta({

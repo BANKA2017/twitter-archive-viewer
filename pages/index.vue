@@ -7,17 +7,9 @@
             <div class="col-span-4 md:col-span-3">
                 <div v-if="!globalHandle" class="w-full">
                     <read-directory/>
-                    <!--<div class="mt-3 rounded-xl bg-gray-100 dark:bg-gray-900 p-3" >
-                        ..
-                    </div>-->
                 </div>
                 <div v-else-if="Object.keys(state.tweets).length === 0" class="flex justify-center">
-                    <svg class="animate-spin -ml-1 mr-3 h-10 w-10 text-teal-400 dark:text-white" fill="none"
-                         viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                              fill="currentColor"></path>
-                    </svg>
+                    <loading-icon />
                 </div>
                 <div v-else class="">
                     <div class="grid grid-cols-4 gap-5 mb-5">
@@ -59,23 +51,22 @@
                             <div class="p-5 bg-gray-100 dark:bg-gray-900 rounded-xl">
                                 <div class="py-1 flex justify-between items-center">
                                     <div class="text-white align-middle">
-                                        <a v-if="tweet.retweet_from_name" :href="`https://twitter.com/`+tweet.retweet_from_name" target="_blank" class="inline-block mr-1 -my-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em] ">RT
-                                            {{ tweet.retweet_from.length > 10 ? [...tweet.retweet_from].slice(0, 10).join('') + '...' : tweet.retweet_from }}</a>
+                                        <a v-if="tweet.retweet_from_name" :href="`https://twitter.com/`+tweet.retweet_from_name" target="_blank" class="inline-block mr-1 text-sm border-2 border-sky-500 rounded-full max-w-[15em]"><span class="bg-sky-500 px-2 rounded-full ">RT</span><span class="text-black dark:text-white px-2">{{ tweet.retweet_from.length > 10 ? [...tweet.retweet_from].slice(0, 10).join('') + '...' : tweet.retweet_from }}</span></a>
                                         <a v-else-if="tweet.conversation_id_str !== tweet.tweet_id" :href="`https://twitter.com/`+tweet.retweet_from_name" target="_blank" class="inline-block mr-1 -my-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">Reply</a>
                                         <a v-if="Object.keys(tweet.quoteObject).length" target="_blank" :href="`https://twitter.com/i/status/`+tweet.quoteObject.tweet_id" class="inline-block mr-1 -my-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">Quote</a>
                                         <span v-if="Object.keys(tweet.cardObject).length && !['periscope_broadcast', 'broadcast', 'audiospace'].includes(tweet.cardObject.type)" class="inline-block mr-1 -my-1 px-2.5 text-sm rounded-full dark:bg-sky-600 bg-sky-500 text-ellipsis overflow-hidden max-w-[15em]">Card</span>
-                                        <a v-else-if="Object.keys(tweet.cardObject).length && ['periscope_broadcast', 'broadcast'].includes(tweet.cardObject.type)" :href="tweet.cardObject.url" target="_blank" class="inline-block mr-1 text-sm border-2 border-[#F91880] rounded-full max-w-[15em]"><span class="bg-[#F91880] px-2 rounded-full ">Broadcast</span><span class="text-black dark:text-white px-2">{{ tweet.broadcastObject.total }}</span></a>
-                                        <a v-else-if="Object.keys(tweet.cardObject).length && ['audiospace'].includes(tweet.cardObject.type)" :href="'https://twitter.com/i/spaces/'+tweet.cardObject.url" target="_blank" class="inline-block mr-1 text-sm border-2 border-[#9C63FA] rounded-full max-w-[15em]"><span class="bg-[#9C63FA] px-2 rounded-full ">Space</span><span class="text-black dark:text-white px-2">{{ tweet.audiospaceObject.total }}</span></a>
+                                        <a v-else-if="Object.keys(tweet.cardObject).length && ['periscope_broadcast', 'broadcast'].includes(tweet.cardObject.type) && tweet.broadcastObject" :href="tweet.cardObject.url" target="_blank" class="inline-block mr-1 text-sm border-2 border-[#F91880] rounded-full max-w-[15em]"><span class="bg-[#F91880] px-2 rounded-full ">{{ tweet.cardObject.type === 'periscope_broadcast' ? 'Periscope' : 'Broadcast' }}</span><span class="text-black dark:text-white px-2">{{ tweet.broadcastObject.total }}</span></a>
+                                        <a v-else-if="Object.keys(tweet.cardObject).length && ['audiospace'].includes(tweet.cardObject.type) && tweet.audiospaceObject" :href="'https://twitter.com/i/spaces/'+tweet.cardObject.url" target="_blank" class="inline-block mr-1 text-sm border-2 border-[#9C63FA] rounded-full max-w-[15em]"><span class="bg-[#9C63FA] px-2 rounded-full ">Space</span><span class="text-black dark:text-white px-2">{{ tweet.audiospaceObject.total }}</span></a>
                                     </div>
-                                    <a :href="`https://twitter.com/i/status/`+tweet.conversation_id_str" class="hover:underline underline-offset-1 text-sm font-mono" target="_blank"><span class="font-bold mr-1">CONVERSATION</span>{{ tweet.conversation_id_str }}</a>
+                                    <a :href="`https://twitter.com/i/status/`+tweet.conversation_id_str" class="hidden md:inline-block hover:underline underline-offset-1 text-sm font-mono" target="_blank"><span class="font-bold mr-1">CONVERSATION</span>{{ tweet.conversation_id_str }}</a>
+                                    <a :href="`https://twitter.com/i/status/`+tweet.tweet_id" class="md:hidden hover:underline underline-offset-1 text-sm font-mono" target="_blank"><span class="font-bold mr-1  after:content-['_↗']"></span></a>
                                 </div>
                                 <div class="py-1 flex justify-between">
                                     <div class="">
-                                        <!--TODO retweet-->
                                         <h5 class="inline-block text-lg font-bold">{{ tweet.display_name }}</h5>
                                         <a :href="`https://twitter.com/`+tweet.name" class="text-sm px-2 hover:underline-offset-1 hover:underline " target="_blank">@{{ tweet.name }}</a>
                                     </div>
-                                    <a :href="`https://twitter.com/i/status/`+tweet.tweet_id" class="hover:underline underline-offset-1 text-sm font-mono" target="_blank"><span class="font-bold mr-1">ID</span>{{ tweet.tweet_id }}</a>
+                                    <a :href="`https://twitter.com/i/status/`+tweet.tweet_id" class="hidden md:inline-block hover:underline underline-offset-1 text-sm font-mono" target="_blank"><span class="font-bold mr-1">ID</span>{{ tweet.tweet_id }}</a>
                                 </div>
 
                                 <full-text v-if="!/^https:\/\/t\.co\/\w+$/.test(tweet.full_text)" class="py-2" :entities="tweet.entities" :full_text_origin="tweet.full_text_origin"/>
@@ -150,6 +141,7 @@ import Reply from "~/components/icons/Reply.vue";
 import Like from "~/components/icons/Like.vue";
 import Pagination from "~/components/Pagination.vue";
 import {Tweet} from "~/type/Content";
+import LoadingIcon from "~/components/LoadingIcon.vue";
 
 useHead({title: "Archive"})
 
@@ -233,7 +225,7 @@ watch(() => state.info, async () => {
     if (!(state.info?.banner || '').startsWith('about:blank')) {
         const banner = dataHandle.value.filter(x => x[0].startsWith(`banner_${state.info.uid_str}`))[0]
         if (banner) {
-            state.info.banner = URL.createObjectURL(banner[1].getFile ? await banner[1].getFile() : banner[1])
+            state.info.banner = URL.createObjectURL(banner[1].getFile ? await banner[1].getFile() : (banner[1].getData ? (await readFile(banner[1], 'blob')).content : banner[1]))
         } else {
             state.info.banner = 'about:blank'
         }
@@ -243,7 +235,7 @@ watch(() => state.info, async () => {
     if (!(state.info?.header || '').startsWith('about:blank')) {
         const avatar = dataHandle.value.filter(x => x[0].startsWith(`avatar_${state.info.uid_str}`))[0]
         if (avatar) {
-            state.info.header = URL.createObjectURL(avatar[1].getFile ? await avatar[1].getFile() : avatar[1])
+            state.info.header = URL.createObjectURL(avatar[1].getFile ? await avatar[1].getFile() : (avatar[1].getData ? (await readFile(avatar[1], 'blob')).content : avatar[1]))
         } else {
             state.info.header = 'about:blank'
         }

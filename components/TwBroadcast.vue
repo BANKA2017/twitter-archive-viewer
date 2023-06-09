@@ -3,6 +3,9 @@
         <video v-if="state.broadcastUrl"
                :class="{'w-full': true, 'aspect-video': true, 'object-cover': true, 'h-[100%]': true, 'rounded-xl': true, }"
                :src="state.broadcastUrl" controls preload="metadata"/>
+        <div v-else-if="state.exist" class="rounded-xl w-full p-3 bg-gray-200 dark:bg-gray-800 my-2">
+            Loading...
+        </div>
         <div v-else class="rounded-xl w-full p-3 bg-gray-200 dark:bg-gray-800 my-2">Local video is <span class="font-bold">NOT</span> available, please watch <a :href="cardObject.url" target="_blank" class="underline-offset-2 underline text-sky-500">online</a> </div>
         <div v-if="broadcastObject.title" class="rounded-xl w-full p-3 bg-gray-200 dark:bg-gray-800 my-2">
             {{broadcastObject.title}}
@@ -15,6 +18,7 @@
     import {PropType} from "vue";
     import {Card, LiveVideoContent} from "~/type/Content";
     import {useMainStore} from "~/stores/main";
+    import {readFile} from "~/share/Tools";
 
     const props = defineProps({
         cardObject: {
@@ -32,14 +36,17 @@
 
     const state = reactive<{
         broadcastUrl: string
+        exist: boolean
     }>({
         broadcastUrl: '',
+        exist: false
     })
 
     onMounted(async () => {
         const file = dataHandle.value.filter(x => x[0] === `broadcast_${props.broadcastObject.id}.mp4`)[0]
         if (file) {
-            state.broadcastUrl = URL.createObjectURL(file[1].getFile ? await file[1].getFile() : file[1])
+            state.exist = true
+            state.broadcastUrl = URL.createObjectURL(file[1].getFile ? await file[1].getFile() : (file[1].getData ? (await readFile(file[1], 'blob')).content : file[1]))
         }
     })
 </script>

@@ -1,6 +1,6 @@
 <template>
     <footer class=" flex flex-col items-end my-10 text-sm">
-        <!--<section class="text-gray-500 font-sans mb-1"><NuxtLink href="/about" class="font-bold underline underline-offset-2">about</NuxtLink></section>-->
+        <div class="text-sm text-gray-500 text-center my-5 md:hidden">A Twitter Monitor Project</div>
     </footer>
 </template>
 <script lang="ts" setup>

@@ -6,13 +6,8 @@
             </div>
             <div class="col-span-4 md:col-span-3">
                 <div v-if="Object.keys(state.mediaList).length === 0" class="flex justify-center">
-                    <svg class="animate-spin -ml-1 mr-3 h-10 w-10 text-teal-400 dark:text-white" fill="none"
-                         viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                              fill="currentColor"></path>
-                    </svg>
-                </div>
+                    <loading-icon />
+                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
                     <div :class="{'cursor-pointer': true, 'bg-slate-300': true, 'aspect-video': true, 'border-2': true, 'border-white': true, 'dark:border-black': true, 'hover:border-sky-700': true, 'dark:bg-slate-700': true, 'dark:hover:border-sky-300': true, 'select-none': true, 'col-span-1': true}" v-for="mediaData in state.mediaList" :key="mediaData.fileInfo.basename">
                         <div class="relative w-full aspect-video cover-item group/cover">
@@ -45,6 +40,7 @@ import {OpenNewPage, readFile, ScrollTo} from "~/share/Tools";
 import SideList from "~/components/SideList.vue";
 import {OnlineMedia} from "~/type/Content";
 import Pagination from "~/components/Pagination.vue";
+import LoadingIcon from "~/components/LoadingIcon.vue";
 
 useHead({title: "Media"})
 
@@ -74,7 +70,7 @@ const filterMedia = async (): Promise<{ blob: string; fileInfo: OnlineMedia; }[]
         const file = dataHandle.value.filter(x => x[0] === media.basename)[0]
         if (file) {
             tmpBlob.push({
-                blob: URL.createObjectURL(file[1].getFile ? await file[1].getFile() : file[1]),
+                blob: URL.createObjectURL(file[1].getFile ? await file[1].getFile() : (file[1].getData ? (await readFile(file[1], 'blob')).content : file[1])),
                 fileInfo: media
             })
         }
