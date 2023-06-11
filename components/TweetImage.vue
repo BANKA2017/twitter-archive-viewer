@@ -61,7 +61,7 @@ onMounted(async () => {
     for (const media of tmpList) {
         const file = dataHandle.value.filter(x => x[0] === media.basename)[0]
         if (file) {
-            media.url = URL.createObjectURL(file[1].getFile ? await file[1].getFile() : (file[1].getData ? (await readFile(file[1], 'blob')).content : file[1]))
+            media.url = URL.createObjectURL(new Blob([file[1].getFile ? await file[1].getFile() : (file[1].getData ? (await readFile(file[1], 'blob')).content : file[1])], {type: media.content_type}))
             tmpRealList.push(media)
         }
     }

@@ -46,7 +46,7 @@
         const file = dataHandle.value.filter(x => x[0] === `audiospace_${props.audiospaceObject.id}.aac`)[0]
         if (file) {
             state.exist = true
-            state.audiospaceUrl = URL.createObjectURL(file[1].getFile ? await file[1].getFile() : (file[1].getData ? (await readFile(file[1], 'blob')).content : file[1]))
+            state.audiospaceUrl = URL.createObjectURL(new Blob([file[1].getFile ? await file[1].getFile() : (file[1].getData ? (await readFile(file[1], 'blob')).content : file[1])], {type: 'audio/aac'}))
         }
     })
 </script>

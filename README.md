@@ -10,12 +10,12 @@ Archive Viewer is a complementary page to Archiver that allows offline reading o
 
 ## Browser
 
-| Status | Name                             | Version       | More...                                                                                                              |
-|:------:|:---------------------------------|:--------------|:---------------------------------------------------------------------------------------------------------------------|
-| `[x]`  | Chromium                         | Latest        | - Drop archive folder or .zip file<br/>- Click to upload archive folder or .zip file                                 |
-| `[-]`  | Firefox, Safari or other browser | Latest        | - Click to upload archive folder or .zip file                                                                        |
-| `[-]`  | Android Chrome                   | Latest        | - Click to upload .zip file                                                                                          |
-| `[-]`  | iOS/iPadOS Safari                | 16.4.1, mini5 | - Click to upload .zip file<br/>- Unable to play video or audio<br/>- Running out of memory when opening large files |
+| Status | Name                             | Version       | More...                                                                              |
+|:------:|:---------------------------------|:--------------|:-------------------------------------------------------------------------------------|
+| `[x]`  | Chromium                         | Latest        | - Drop archive folder or .zip file<br/>- Click to upload archive folder or .zip file |
+| `[-]`  | Firefox, Safari or other browser | Latest        | - Click to upload archive folder or .zip file                                        |
+| `[-]`  | Android Chrome                   | Latest        | - Click to upload .zip file                                                          |
+| `[-]`  | iOS/iPadOS Safari                | 16.4.1, mini5 | - Click to upload .zip file<br/>- Running out of memory when opening large files     |
 
 ## TODO
 

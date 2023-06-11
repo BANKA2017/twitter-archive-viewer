@@ -46,7 +46,7 @@
         const file = dataHandle.value.filter(x => x[0] === `broadcast_${props.broadcastObject.id}.mp4`)[0]
         if (file) {
             state.exist = true
-            state.broadcastUrl = URL.createObjectURL(file[1].getFile ? await file[1].getFile() : (file[1].getData ? (await readFile(file[1], 'blob')).content : file[1]))
+            state.broadcastUrl = URL.createObjectURL(new Blob([file[1].getFile ? await file[1].getFile() : (file[1].getData ? (await readFile(file[1], 'blob')).content : file[1])], {type: 'video/mp4'}))
         }
     })
 </script>
