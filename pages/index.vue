@@ -16,8 +16,8 @@
                         <div class="rounded-xl dark:bg-gray-900 bg-gray-100 col-span-4 lg:col-span-3 min-h-[200px]">
                             <img v-if="existBanner" class="cursor-zoom-in rounded-t-xl" :src="state.info.banner" alt="banner" @click="OpenNewPage(state.info.banner)">
                             <div v-else class="rounded-t-xl h-[50%] bg-sky-500 dark:bg-sky-600 "></div>
-                            <img class="cursor-zoom-in rounded-full w-[30%] sm:w-[16%] md:w-[20%] lg:w-[16%] -my-[15%] sm:-my-[8%] md:-my-[10%] lg:-my-[8%] mx-[2%]" :src="state.info.header" alt="avatar" @click="OpenNewPage(state.info.header)">
-                            <div class="px-5 py-1 ml-[30%] sm:ml-[16%] md:ml-[20%] lg:ml-[16%]">
+                            <img class="cursor-zoom-in border-4 border-gray-100 dark:border-gray-900 rounded-full w-[20%] sm:w-[16%] md:w-[20%] lg:w-[16%] -translate-y-0 -my-[10%] sm:-my-[8%] md:-my-[10%] lg:-my-[8%] mx-[2%]" :src="state.info.header" alt="avatar" @click="OpenNewPage(state.info.header)">
+                            <div class="px-5 py-1 ml-[20%] sm:ml-[16%] md:ml-[20%] lg:ml-[16%]">
                                 <h5 class="text-lg font-bold">{{ state.info.display_name }}</h5>
                                 <a :href="`https://twitter.com/`+state.info.name" class="block hover:underline-offset-1 hover:underline " target="_blank">@{{ state.info.name }}</a>
                             </div>
@@ -43,7 +43,11 @@
                     </div>
                     <!--filter-->
                     <div id="filter" class="w-full ">
-                        <div v-for="(filterValue, filterKey) in state.filter" :key="filterKey" :class="{'rounded-full': true, 'px-3': true, 'py-1': true, 'mr-2': true, 'mb-1': true, 'border-2': true, 'hover:text-white': true, 'text-white': filterValue, 'dark:text-white': true, 'border-sky-500': true, 'hover:border-sky-600': true, 'bg-sky-500': filterValue, 'bg-transparent': !filterValue, 'hover:bg-sky-600': true, 'transition-colors': true, 'inline-block': true, 'cursor-pointer': true,}" @click="state.filter[filterKey] = !state.filter[filterKey]">{{ filterKey }}</div>
+                        <div v-for="(filterValue, filterKey) in state.filter" :key="filterKey" :class="{'rounded-full': true, 'px-3': true, 'py-1': true, 'mr-2': true, 'mb-1': true, 'border-2': true, 'hover:text-white': true, 'text-white': filterValue, 'dark:text-white': true, 'border-sky-500': true, 'hover:border-sky-600': !filterValue, 'hover:bg-sky-600': !filterValue, 'hover:border-pink-500': filterValue, 'hover:bg-pink-500': filterValue, 'bg-sky-500': filterValue, 'bg-transparent': !filterValue, 'transition-colors': true, 'inline-block': true, 'cursor-pointer': true,}" @click="state.filter[filterKey] = !state.filter[filterKey]">{{ filterKey }}</div>
+                        <div v-if="route.query.conversation" @click="$router.push({path: '/', query: Object.fromEntries(Object.entries($route.query).filter(kv => kv[0] !== 'conversation'))})" class="rounded-full px-3 py-1 mr-2 mb-1 border-2 border-sky-500 hover:bg-pink-500 hover:border-pink-500 dark:hover:border-pink-500 inline-block cursor-pointer transition-colors">
+                            <span class="font-bold">STATUS</span>:
+                            <span >{{route.query.conversation}}</span>
+                        </div>
                     </div>
                     <!--tweets-->
                     <div v-for="tweet in state.tweetsData" :key="tweet.tweet_id" class="grid grid-cols-4 gap-5 ">
@@ -58,7 +62,8 @@
                                         <a v-else-if="Object.keys(tweet.cardObject).length && ['periscope_broadcast', 'broadcast'].includes(tweet.cardObject.type) && tweet.broadcastObject" :href="tweet.cardObject.url" target="_blank" class="inline-block mr-1 text-sm border-2 border-[#F91880] rounded-full max-w-[15em]"><span class="bg-[#F91880] px-2 rounded-full ">{{ tweet.cardObject.type === 'periscope_broadcast' ? 'Periscope' : 'Broadcast' }}</span><span class="text-black dark:text-white px-2">{{ tweet.broadcastObject.total }}</span></a>
                                         <a v-else-if="Object.keys(tweet.cardObject).length && ['audiospace'].includes(tweet.cardObject.type) && tweet.audiospaceObject" :href="'https://twitter.com/i/spaces/'+tweet.cardObject.url" target="_blank" class="inline-block mr-1 text-sm border-2 border-[#9C63FA] rounded-full max-w-[15em]"><span class="bg-[#9C63FA] px-2 rounded-full ">Space</span><span class="text-black dark:text-white px-2">{{ tweet.audiospaceObject.total }}</span></a>
                                     </div>
-                                    <a :href="`https://twitter.com/i/status/`+tweet.conversation_id_str" class="hidden md:inline-block hover:underline underline-offset-1 text-sm font-mono" target="_blank"><span class="font-bold mr-1">CONVERSATION</span>{{ tweet.conversation_id_str }}</a>
+                                    <!--TODO can be used in small screen-->
+                                    <router-link :to="{query: {conversation: tweet.conversation_id_str}}" class="hidden md:inline-block hover:underline underline-offset-1 text-sm font-mono"><span class="font-bold mr-1">CONVERSATION</span>{{ tweet.conversation_id_str }}</router-link>
                                     <a :href="`https://twitter.com/i/status/`+tweet.tweet_id" class="md:hidden hover:underline underline-offset-1 text-sm font-mono" target="_blank"><span class="font-bold mr-1  after:content-['_↗']"></span></a>
                                 </div>
                                 <div class="py-1 flex justify-between">
@@ -71,19 +76,9 @@
 
                                 <full-text v-if="!/^https:\/\/t\.co\/\w+$/.test(tweet.full_text)" class="py-2" :entities="tweet.entities" :full_text_origin="tweet.full_text_origin"/>
                                 <div v-if="tweet.mediaObject && tweet.mediaObject.some(x => x.source === 'tweets')">
-                                    <tweet-image :list="tweet.mediaObject.filter(x => x.source === 'tweets')"/>
+                                    <tweet-image :list="tweet.mediaObject.filter(x => x.source === 'tweets' || (tweet.poll && x.source === 'cards'))"/>
                                 </div>
-                                <div v-if="tweet.poll" class="rounded-xl dark:bg-gray-800 px-5 py-3 my-1">
-                                    <div class="flex justify-between text-lg">
-                                        <span class="font-bold">Poll label</span>
-                                        <span class="font-bold">Count</span>
-                                    </div>
-                                    <div class="divider my-1"></div>
-                                    <div v-for="(poll, index) in tweet.pollObject" :key="poll.choice_label" class="flex justify-between text-md ">
-                                        <span class="font-bold">{{ poll.choice_label }}</span>
-                                        <span>{{ poll.count }}</span>
-                                    </div>
-                                </div>
+                                <tw-polls v-if="tweet.poll" :tweet-id="tweet.tweet_id_str" :polls="tweet.pollObject" />
                                 <!--quote-->
                                 <div v-if="Object.keys(tweet.quoteObject).length" class="my-2 p-5 rounded-xl bg-gray-200 dark:bg-gray-800">
                                     <div class="py-1 flex justify-between">
@@ -142,6 +137,7 @@ import Like from "~/components/icons/Like.vue";
 import Pagination from "~/components/Pagination.vue";
 import {Tweet} from "~/type/Content";
 import LoadingIcon from "~/components/LoadingIcon.vue";
+import {useRoute, useRouter} from "vue-router";
 
 useHead({title: "Archive"})
 
@@ -168,8 +164,12 @@ const mainStore = useMainStore()
 const globalHandle = computed(() => mainStore.globalHandle)
 const dataHandle = computed(() => mainStore.dataHandle)
 const page = computed(() => mainStore.page)
+const flexibleMode = computed(() => mainStore.flexible)
 
 const existBanner = computed(() => state.info.banner && state.info.banner !== 'about:blank')
+
+const route = useRoute()
+const router = useRouter()
 
 const getDate = (timestamp: number = 0) => {
     const tmpDate = new Date(timestamp)
@@ -182,7 +182,11 @@ const filterTweets = async () => {
         return []
     }
     const tmpTweets = Object.entries(state.tweets).filter(tweet => tweet[1].name === state.info.name).filter(tweet => {
-        if (!Object.entries(state.filter).some(x => x[1])) {return true}
+        const query = Object.entries(route.query)
+        if (query.length) {
+            if (route.query.conversation && route.query.conversation === tweet[1].conversation_id_str) {return true}
+        }
+        else if (!Object.entries(state.filter).some(x => x[1])) {return true}
         else if (state.filter.Reply && tweet[1].conversation_id_str !== tweet[1].tweet_id) {return true}
         else if (state.filter.Media && tweet[1].mediaObject && tweet[1].mediaObject.some(x => x.source === 'tweets')) {return true}
         else if (state.filter.Broadcast && ['periscope_broadcast', 'broadcast'].includes(tweet[1].cardObject.type)) {return true}
@@ -210,7 +214,7 @@ watch(dataHandle, async () => {
     }
 })
 
-watch(page, async () => {
+router.afterEach(async (from, to) => {
     ScrollTo(0)
     state.tweetsData = await filterTweets()
 })
@@ -221,6 +225,12 @@ watch(state.filter, async () => {
 }, {deep: true})
 
 watch(() => state.info, async () => {
+    if (flexibleMode.value > 0) {
+        if (!state.info.banner || state.info.banner.endsWith('/0')) {
+            state.info.banner = 'about:blank'
+        }
+        return
+    }
     //banner
     if (!(state.info?.banner || '').startsWith('about:blank')) {
         const banner = dataHandle.value.filter(x => x[0].startsWith(`banner_${state.info.uid_str}`))[0]

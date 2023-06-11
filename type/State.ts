@@ -14,5 +14,6 @@ export interface State {
   globalHandle: FileSystemDirectoryHandle | null
   dataHandle: [string, FileSystemFileHandle][]
   page: number
-  zipMode: boolean
+  mode: number
+  flexible: number
 }

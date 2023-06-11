@@ -51,13 +51,20 @@ const clickEvent = async (e: ClickEvent) => {
 }
 
 const clickZipEvent = async (e: ClickEvent) => {
-    const zipHandle = await fileOpen({mimeTypes: ['application/zip'],})//await window
-    //console.log(zipHandle)// .showDirectoryPicker()
-    const globalHandle = new zip.ZipReader(new zip.BlobReader(zipHandle))
-    mainStore.updateCoreValue('globalHandle', globalHandle)
-    const fileList = (await globalHandle.getEntries()).filter(file => !file.directory && !file.filename.includes('/rawdata/')).map(file => [file.filename.split('/').pop(), file])
-    const tmpListName = fileList.map(x => x[0])
-    mainStore.updateCoreValue('dataHandle', dataHandle.value.filter(x => !tmpListName.includes(x[0])).concat(fileList))
+    const zipHandle = await fileOpen({mimeTypes: ['application/zip', 'application/json'],})//await window
+    if (zipHandle.type === 'application/json') {
+        const fileBlob = zipHandle.handle ? await zipHandle.handle.getFile() : (zipHandle.getFile ? await zipHandle.getFile() : zipHandle)
+        mainStore.updateCoreValue('globalHandle', true)
+        mainStore.updateCoreValue('flexible', 2)
+        mainStore.updateCoreValue('dataHandle', [['data.json', fileBlob]])
+    } else if (zipHandle.type === 'application/zip') {
+        //console.log(zipHandle)// .showDirectoryPicker()
+        const globalHandle = new zip.ZipReader(new zip.BlobReader(zipHandle))
+        mainStore.updateCoreValue('globalHandle', globalHandle)
+        const fileList = (await globalHandle.getEntries()).filter(file => !file.directory && !file.filename.includes('/rawdata/')).map(file => [file.filename.split('/').pop(), file])
+        const tmpListName = fileList.map(x => x[0])
+        mainStore.updateCoreValue('dataHandle', dataHandle.value.filter(x => !tmpListName.includes(x[0])).concat(fileList))
+    }
 }
 
 const dropEvent = async (e: DragEvent) => {
@@ -71,6 +78,11 @@ const dropEvent = async (e: DragEvent) => {
         const fileList = (await globalHandle.getEntries()).filter(file => !file.directory && !file.filename.includes('/rawdata/')).map(file => [file.filename.split('/').pop(), file])
         const tmpListName = fileList.map(x => x[0])
         mainStore.updateCoreValue('dataHandle', dataHandle.value.filter(x => !tmpListName.includes(x[0])).concat(fileList))
+    } else if (firstItem.kind === 'file' && firstItem.name.endsWith('.json')) {
+        const fileBlob = await firstItem.getFile()
+        mainStore.updateCoreValue('globalHandle', true)
+        mainStore.updateCoreValue('flexible', 2)
+        mainStore.updateCoreValue('dataHandle', [['data.json', fileBlob]])
     } else {
         for (const item of e.dataTransfer.items) {
             // kind will be 'file' for file/directory entries.
@@ -110,7 +122,7 @@ onMounted(() => {
 
         </div>
         <div v-else-if="!isMobile" @click="clickEvent" class="my-2 px-3 py-4 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-900 dark:hover:bg-gray-800 cursor-pointer transition-colors text-xl">Upload <span class="bg-sky-100 dark:bg-sky-900 px-1 rounded">folder</span></div>
-        <div @click="clickZipEvent" class="my-2 px-3 py-4 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-900 dark:hover:bg-gray-800 cursor-pointer transition-colors text-xl">Upload <span class="bg-sky-100 dark:bg-sky-900 px-1 rounded">*.zip</span></div>
+        <div @click="clickZipEvent" class="my-2 px-3 py-4 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-900 dark:hover:bg-gray-800 cursor-pointer transition-colors text-xl">Upload <span class="bg-sky-100 dark:bg-sky-900 px-1 rounded">*.zip</span> or <span class="bg-sky-100 dark:bg-sky-900 px-1 rounded">*.json</span></div>
 
         <!--<div class="my-2">
             <div class="inline-block mr-1 px-2 text-sm rounded-full bg-sky-500" v-if="isChrome">Chrome</div>

@@ -47,6 +47,7 @@ const state = reactive<{
 
 const mainStore = useMainStore()
 const dataHandle = computed(() => mainStore.dataHandle)
+const flexibleMode = computed(() => mainStore.flexible)
 
 onMounted(async () => {
     let tmpNameList: string[] = []
@@ -59,10 +60,17 @@ onMounted(async () => {
     })
     const tmpRealList = []
     for (const media of tmpList) {
-        const file = dataHandle.value.filter(x => x[0] === media.basename)[0]
-        if (file) {
-            media.url = URL.createObjectURL(new Blob([file[1].getFile ? await file[1].getFile() : (file[1].getData ? (await readFile(file[1], 'blob')).content : file[1])], {type: media.content_type}))
+        if (flexibleMode.value > 0) {
+            if (!/^http(?:s|):\/\//gm.test(media.url)) {
+                media.url = 'https://' + media.url
+            }
             tmpRealList.push(media)
+        } else {
+            const file = dataHandle.value.filter(x => x[0] === media.basename)[0]
+            if (file) {
+                media.url = URL.createObjectURL(new Blob([file[1].getFile ? await file[1].getFile() : (file[1].getData ? (await readFile(file[1], 'blob')).content : file[1])], {type: media.content_type}))
+                tmpRealList.push(media)
+            }
         }
     }
     state.realList = tmpRealList

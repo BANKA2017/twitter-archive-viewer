@@ -56,6 +56,7 @@ const mainStore = useMainStore()
 const dataHandle = computed(() => mainStore.dataHandle)
 const globalHandle = computed(() => mainStore.globalHandle)
 const page = computed(() => mainStore.page)
+const flexibleMode = computed(() => mainStore.flexible)
 
 const router = useRouter()
 if (!globalHandle.value) {
@@ -67,12 +68,19 @@ const filterMedia = async (): Promise<{ blob: string; fileInfo: OnlineMedia; }[]
 
     const tmpBlob = []
     for (const media of tmpList) {
-        const file = dataHandle.value.filter(x => x[0] === media.basename)[0]
-        if (file) {
+        if (flexibleMode.value > 0) {
             tmpBlob.push({
-                blob: URL.createObjectURL(new Blob([file[1].getFile ? await file[1].getFile() : (file[1].getData ? (await readFile(file[1], 'blob')).content : file[1])], {type: media.content_type})),
+                blob: media.url,
                 fileInfo: media
             })
+        } else {
+            const file = dataHandle.value.filter(x => x[0] === media.basename)[0]
+            if (file) {
+                tmpBlob.push({
+                    blob: URL.createObjectURL(new Blob([file[1].getFile ? await file[1].getFile() : (file[1].getData ? (await readFile(file[1], 'blob')).content : file[1])], {type: media.content_type})),
+                    fileInfo: media
+                })
+            }
         }
     }
 

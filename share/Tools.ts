@@ -32,7 +32,7 @@ const readFile = async (fileHandle: FileSystemFileHandle | Entry, type: 'text' |
         resolve({content: await fileHandle.getData(new zip.BlobWriter(), {}), handle: fileHandle})
       }
     } else if (("text" in fileHandle && type === 'text') || ("blob" in fileHandle && type === 'blob')) {
-      console.log(fileHandle.text, fileHandle.blob)
+      //console.log(fileHandle.text, fileHandle.blob)
       if (type === "text") {
         resolve({content: await fileHandle.text(), handle: fileHandle})
       } else {
