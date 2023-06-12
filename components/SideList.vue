@@ -30,7 +30,7 @@ for (const index in nameList) {
 </script>
 
 <template>
-    <div id="side-list">
+    <div id="side-list" class="select-none">
         <template v-for="nav in state.navs.filter(x => x.active)" :key="nav.name">
             <router-link :class="{'inline-block': true, 'md:block': true, 'my-1': true, 'px-3': true, 'mx-1': true, 'rounded-full': true, 'text-center': true, 'text-2xl': true, 'font-bold': true, 'transition-colors': true, 'hover:bg-sky-500': true, 'bg-sky-500': $route.name === nav.routerName, 'text-black': $route.name !== nav.routerName, 'hover:text-white': true, 'dark:text-white': true, 'text-white': $route.name === nav.routerName, 'py-2': true, }"
                          :to="nav.to">

@@ -7,19 +7,21 @@ Archive Viewer is a complementary page to Archiver that allows offline reading o
 
 - Browse tweets, media, followers and following in archive file/folder
 - Watch broadcast and listen to audio space
+- Strict mode for reading files purely offline and online mode for requesting online media
+- Archive scripts run purely in the browser (not supported on mobile platform)
 
 ## Browser
 
-| Status | Name                             | Version       | More...                                                                              |
-|:------:|:---------------------------------|:--------------|:-------------------------------------------------------------------------------------|
-| `[x]`  | Chromium                         | Latest        | - Drop archive folder or .zip file<br/>- Click to upload archive folder or .zip file |
-| `[-]`  | Firefox, Safari or other browser | Latest        | - Click to upload archive folder or .zip file                                        |
-| `[-]`  | Android Chrome                   | Latest        | - Click to upload .zip file                                                          |
-| `[-]`  | iOS/iPadOS Safari                | 16.4.1, mini5 | - Click to upload .zip file<br/>- Running out of memory when opening large files     |
+| Status | Name                             | Version       | More...                                                                                    |
+|:------:|:---------------------------------|:--------------|:-------------------------------------------------------------------------------------------|
+| `[x]`  | Chromium                         | Latest        | - Drop archive folder or .zip file<br/>- Click to upload archive folder or .zip/.json file |
+| `[-]`  | Firefox, Safari or other browser | Latest        | - Click to upload archive folder or .zip/.json file                                        |
+| `[-]`  | Android Chrome                   | Latest        | - Click to upload .zip/.json file                                                          |
+| `[-]`  | iOS/iPadOS Safari                | 16.4.1, mini5 | - Click to upload .zip/.json file<br/>- Running out of memory when opening large files     |
 
 ## TODO
 
-- [ ] Archive script for browser (Lite mode)
+- [x] Archive script for browser (Lite mode)
 - [ ] Raw data browser
 - [x] Flexible mode, only read tweet data in local file and get media from Twitter server
 - [x] Conversation browser

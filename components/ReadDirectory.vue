@@ -69,31 +69,31 @@ const clickZipEvent = async (e: ClickEvent) => {
 
 const dropEvent = async (e: DragEvent) => {
     e.preventDefault()
-    //pre-check
-    const firstItem = await e.dataTransfer.items[0].getAsFileSystemHandle()
-    if (firstItem.kind === 'file' && firstItem.name.endsWith('.zip')) {
-        const fileBlob = await firstItem.getFile()
-        const globalHandle = new zip.ZipReader(new zip.BlobReader(fileBlob))
-        mainStore.updateCoreValue('globalHandle', globalHandle)
-        const fileList = (await globalHandle.getEntries()).filter(file => !file.directory && !file.filename.includes('/rawdata/')).map(file => [file.filename.split('/').pop(), file])
-        const tmpListName = fileList.map(x => x[0])
-        mainStore.updateCoreValue('dataHandle', dataHandle.value.filter(x => !tmpListName.includes(x[0])).concat(fileList))
-    } else if (firstItem.kind === 'file' && firstItem.name.endsWith('.json')) {
-        const fileBlob = await firstItem.getFile()
-        mainStore.updateCoreValue('globalHandle', true)
-        mainStore.updateCoreValue('flexible', 2)
-        mainStore.updateCoreValue('dataHandle', [['data.json', fileBlob]])
-    } else {
-        for (const item of e.dataTransfer.items) {
+    let count = 0
+    for (const item of e.dataTransfer.items) {
+        if (item.kind !== 'file') {continue}
+        const entry = await item.getAsFileSystemHandle()
+        console.log(entry)
+        if (count === 0 && entry.name.endsWith('.zip')) {
+            const fileBlob = await entry.getFile()
+            const globalHandle = new zip.ZipReader(new zip.BlobReader(fileBlob))
+            mainStore.updateCoreValue('globalHandle', globalHandle)
+            const fileList = (await globalHandle.getEntries()).filter(file => !file.directory && !file.filename.includes('/rawdata/')).map(file => [file.filename.split('/').pop(), file])
+            const tmpListName = fileList.map(x => x[0])
+            mainStore.updateCoreValue('dataHandle', dataHandle.value.filter(x => !tmpListName.includes(x[0])).concat(fileList))
+        } else if (count === 0 && entry.name.endsWith('.json')) {
+            const fileBlob = await entry.getFile()
+            mainStore.updateCoreValue('globalHandle', true)
+            mainStore.updateCoreValue('flexible', 2)
+            mainStore.updateCoreValue('dataHandle', [['data.json', fileBlob]])
+        } else {
             // kind will be 'file' for file/directory entries.
-            if (item.kind === "file") {
-                const entry = await item.getAsFileSystemHandle()
-                mainStore.updateCoreValue('globalHandle', entry)
-                const tmpList = await readDir(entry, ['*'], ['rawdata'])
-                const tmpListName = tmpList.map(x => x[0])
-                mainStore.updateCoreValue('dataHandle', dataHandle.value.filter(x => !tmpListName.includes(x[0])).concat(tmpList))
-            }
+            mainStore.updateCoreValue('globalHandle', entry)
+            const tmpList = await readDir(entry, ['*'], ['rawdata'])
+            const tmpListName = tmpList.map(x => x[0])
+            mainStore.updateCoreValue('dataHandle', dataHandle.value.filter(x => !tmpListName.includes(x[0])).concat(tmpList))
         }
+        count++
     }
 }
 const isChrome = ref<boolean>(false)

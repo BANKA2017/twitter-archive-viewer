@@ -42,7 +42,7 @@
                         </div>
                     </div>
                     <!--filter-->
-                    <div id="filter" class="w-full ">
+                    <div id="filter" class="w-full select-none">
                         <div v-for="(filterValue, filterKey) in state.filter" :key="filterKey" :class="{'rounded-full': true, 'px-3': true, 'py-1': true, 'mr-2': true, 'mb-1': true, 'border-2': true, 'hover:text-white': true, 'text-white': filterValue, 'dark:text-white': true, 'border-sky-500': true, 'hover:border-sky-600': !filterValue, 'hover:bg-sky-600': !filterValue, 'hover:border-pink-500': filterValue, 'hover:bg-pink-500': filterValue, 'bg-sky-500': filterValue, 'bg-transparent': !filterValue, 'transition-colors': true, 'inline-block': true, 'cursor-pointer': true,}" @click="state.filter[filterKey] = !state.filter[filterKey]">{{ filterKey }}</div>
                         <div v-if="route.query.conversation" @click="$router.push({path: '/', query: Object.fromEntries(Object.entries($route.query).filter(kv => kv[0] !== 'conversation'))})" class="rounded-full px-3 py-1 mr-2 mb-1 border-2 border-sky-500 hover:bg-pink-500 hover:border-pink-500 dark:hover:border-pink-500 inline-block cursor-pointer transition-colors">
                             <span class="font-bold">STATUS</span>:
@@ -184,7 +184,7 @@ const filterTweets = async () => {
     }
     const tmpTweets = Object.entries(state.tweets).filter(tweet => tweet[1].name === state.info.name).filter(tweet => {
         if (route.query.conversation && route.query.conversation === tweet[1].conversation_id_str) {return true}
-        else if (!Object.entries(state.filter).some(x => x[1])) {return true}
+        else if (!Object.entries(state.filter).some(x => x[1]) && !Object.keys(route.query).length) {return true}
         else if (state.filter.Reply && tweet[1].conversation_id_str !== tweet[1].tweet_id) {return true}
         else if (state.filter.Media && tweet[1].mediaObject && tweet[1].mediaObject.some(x => x.source === 'tweets')) {return true}
         else if (state.filter.Broadcast && ['periscope_broadcast', 'broadcast'].includes(tweet[1].cardObject.type)) {return true}
