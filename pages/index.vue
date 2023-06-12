@@ -62,9 +62,10 @@
                                         <a v-else-if="Object.keys(tweet.cardObject).length && ['periscope_broadcast', 'broadcast'].includes(tweet.cardObject.type) && tweet.broadcastObject" :href="tweet.cardObject.url" target="_blank" class="inline-block mr-1 text-sm border-2 border-[#F91880] rounded-full max-w-[15em]"><span class="bg-[#F91880] px-2 rounded-full ">{{ tweet.cardObject.type === 'periscope_broadcast' ? 'Periscope' : 'Broadcast' }}</span><span class="text-black dark:text-white px-2">{{ tweet.broadcastObject.total }}</span></a>
                                         <a v-else-if="Object.keys(tweet.cardObject).length && ['audiospace'].includes(tweet.cardObject.type) && tweet.audiospaceObject" :href="'https://twitter.com/i/spaces/'+tweet.cardObject.url" target="_blank" class="inline-block mr-1 text-sm border-2 border-[#9C63FA] rounded-full max-w-[15em]"><span class="bg-[#9C63FA] px-2 rounded-full ">Space</span><span class="text-black dark:text-white px-2">{{ tweet.audiospaceObject.total }}</span></a>
                                     </div>
-                                    <!--TODO can be used in small screen-->
-                                    <router-link :to="{query: {conversation: tweet.conversation_id_str}}" class="hidden md:inline-block hover:underline underline-offset-1 text-sm font-mono"><span class="font-bold mr-1">CONVERSATION</span>{{ tweet.conversation_id_str }}</router-link>
-                                    <a :href="`https://twitter.com/i/status/`+tweet.tweet_id" class="md:hidden hover:underline underline-offset-1 text-sm font-mono" target="_blank"><span class="font-bold mr-1  after:content-['_↗']"></span></a>
+                                    <div >
+                                        <router-link :to="{query: {conversation: tweet.conversation_id_str}}" class=" hover:underline underline-offset-1 text-sm font-mono mr-1"><span class="hidden md:inline-block"><span class="font-bold mr-1 ">CONVERSATION</span>{{ tweet.conversation_id_str }}</span><span class="md:hidden" ><reply height="1.1rem" width="1.1rem" status="mr-1 inline-block"/></span></router-link>
+                                        <a :href="`https://twitter.com/i/status/`+tweet.tweet_id" class="md:hidden hover:underline underline-offset-1 text-sm font-mono" target="_blank"><span class="font-bold mr-1 after:content-['_↗']"></span></a>
+                                    </div>
                                 </div>
                                 <div class="py-1 flex justify-between">
                                     <div class="">
@@ -182,10 +183,7 @@ const filterTweets = async () => {
         return []
     }
     const tmpTweets = Object.entries(state.tweets).filter(tweet => tweet[1].name === state.info.name).filter(tweet => {
-        const query = Object.entries(route.query)
-        if (query.length) {
-            if (route.query.conversation && route.query.conversation === tweet[1].conversation_id_str) {return true}
-        }
+        if (route.query.conversation && route.query.conversation === tweet[1].conversation_id_str) {return true}
         else if (!Object.entries(state.filter).some(x => x[1])) {return true}
         else if (state.filter.Reply && tweet[1].conversation_id_str !== tweet[1].tweet_id) {return true}
         else if (state.filter.Media && tweet[1].mediaObject && tweet[1].mediaObject.some(x => x.source === 'tweets')) {return true}

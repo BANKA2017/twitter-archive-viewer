@@ -21,11 +21,11 @@ const Download = (url: string, fileName: string) => {
 const readFile = async (fileHandle: FileSystemFileHandle | Entry, type: 'text' | 'blob' = 'text') => {
   return await new Promise(async (resolve, reject) => {
     let file
-    if ("handle" in fileHandle && "getFile" in fileHandle.handle) {
+    if (fileHandle.handle && fileHandle.handle.getFile) {
       file = await fileHandle.handle.getFile()
     } else if ("getFile" in fileHandle) {
       file = await fileHandle.getFile()
-    } else if ("getData" in fileHandle) {
+    } else if (fileHandle.getData) {
       if (type === "text") {
         resolve({content: await fileHandle.getData(new zip.TextWriter(), {}), handle: fileHandle})
       } else {
@@ -50,14 +50,16 @@ const readFile = async (fileHandle: FileSystemFileHandle | Entry, type: 'text' |
       const result = reader.result
       if (!result || typeof result === 'string') {
         reject({content: null, handle: fileHandle})
+      } else if (result) {
+        try {
+          const content = type === 'text' ? (new TextDecoder()).decode(result) : new Blob([result])
+          resolve({content, handle: fileHandle})
+        } catch (e) {
+          console.error(e)
+          reject({content: null, handle: fileHandle})
+        }
       }
-      try {
-        const content = type === 'text' ? (new TextDecoder()).decode(result) : new Blob([result])
-        resolve({content, handle: fileHandle})
-      } catch (e) {
-        console.error(e)
-        reject({content: null, handle: fileHandle})
-      }
+      reject({content: null, handle: fileHandle})
     }
   })
 

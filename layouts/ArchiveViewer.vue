@@ -24,13 +24,6 @@ import MainTitle from "~/components/MainTitle.vue";
 import Footer from "~/components/Footer.vue";
 //import Loading from "~/components/Loading.vue";
 import {ScrollTo} from "~/share/Tools";
-import {useMainStore} from "~/stores/main";
-import {useRoute} from "vue-router";
-
-const store = useMainStore()
-const platform = computed(() => store.platform)
-
-const route = useRoute()
 
 </script>
 

@@ -1,9 +1,3 @@
-export interface AccountList {
-  [p: string]: {
-    [q: string]: { name: string; display_name: string; nsfw: boolean; organization: boolean; projects: string[][] }[]
-  }
-}
-
 export interface UserInfo {
   uid: string
   uid_str: string
@@ -21,14 +15,6 @@ export interface UserInfo {
   deleted: number
   verified: number
   description_entities: Entity[]
-}
-
-
-export interface LegacyChart {
-  timestamp: number | string
-  followers: number
-  following: number
-  statuses_count: number
 }
 
 export interface Tweet {
@@ -238,104 +224,4 @@ export interface Card {
     title: string
     category: string
   }[]
-}
-
-export interface Status {
-  time: number
-  total_users: number
-  total_tweets: number
-  total_req_tweets: number
-  total_throw_tweets: number
-  total_req_times: number
-  total_errors_count: number
-  total_media_count: number
-  total_time_cost: number
-}
-
-export interface Stats {
-  uid: string
-  name: string
-  display_name: string
-  following: number
-  followers: number
-  statuses_count: number
-  group: string[]
-}
-
-export interface HashtagList {
-  name: string
-  value: number
-}
-
-export interface AdvancedSearchQuery {
-  q?: string
-  text_or_mode?: string
-  text_not_mode?: string
-  user?: string
-  user_and_mode?: string
-  user_not_mode?: string
-  tweet_type?: string
-  tweet_media?: string
-  start?: string
-  end?: string
-  order?: string
-  advanced?: string
-  hidden?: string
-}
-
-export interface BookMarkMedia {
-  is_video: boolean
-  url: string
-  cover: string
-  size: 1//TODO aspect ratio
-}
-
-export interface BookMark {
-  type: 'media' | 'tweet' | 'profile'
-  tweet_id?: string
-  uid: string
-  name: string
-  display_name: string
-  text?: string
-  entities: Entity[]
-  media: BookMarkMedia[]
-  timestamp: string
-  add_timestamp: string
-}
-
-export interface sunBurstType {
-  name?: string
-  itemStyle?: { color: string }
-  value?: number
-  children?: sunBurstType | sunBurstType[]
-  _custom?: {
-    type: string
-    objectType: string
-    value: sunBurstType | sunBurstType[]
-  }
-}
-
-export interface Annual2021Template<U, V> {
-  tweets: U
-  retweet: U
-  hourCount: number[]
-  mediaCount: number[]
-  trendsData: {
-    followers: V
-    statuses_count: V
-    label: { [p in string]: string }
-    color: string[]
-  }
-  renameDepartment: { [q in string]: sunBurstType[] }
-}
-
-export interface Annual2021DataTemplate extends Annual2021Template<[string, number][], {
-  [index: string]: number | string;
-  date: string;
-}[]> {
-}
-
-export interface Annual2021TmpDataTemplate extends Annual2021Template<{ [p in string]: number }, {
-  [index: string]: number | string
-}> {
 }
