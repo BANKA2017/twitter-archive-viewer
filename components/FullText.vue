@@ -78,7 +78,6 @@ const state = reactive<{
     textObject: []
 })
 
-const spreadText = (text: string): string[] => text.split("\n")
 const removeHTMLEntities = (text: string): string => text.replaceAll('&gt;', '>').replaceAll('&lt;', '<').replaceAll("&amp;", "&").replaceAll("&quot;", '"').replaceAll('&apos;', "'")//.replaceAll(' ', "&nbsp;")
 const contentObjectBuilder = () => {
     const displayRange = props.displayRange?.length ? props.displayRange : [0, 0]
@@ -100,7 +99,7 @@ const contentObjectBuilder = () => {
             if (tag_index === 0 && tag.from_index > 0) {
                 nextRichText.push({
                     from_index: 0,
-                    to_index: tag.from_index - 1,
+                    to_index: tag.from_index,
                     richtext_types: [],
                     content: [],
                     text: full_text_origin_array.slice(0, tag.from_index).join('')
