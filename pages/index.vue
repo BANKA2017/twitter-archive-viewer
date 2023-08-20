@@ -184,7 +184,7 @@ const filterTweets = async () => {
     }
     const tmpTweets = Object.entries(state.tweets).filter(tweet => tweet[1].name === state.info.name).filter(tweet => {
         if (route.query.conversation && route.query.conversation === tweet[1].conversation_id_str) {return true}
-        else if (!Object.entries(state.filter).some(x => x[1]) && !Object.keys(route.query).length) {return true}
+        else if (!Object.entries(state.filter).some(x => x[1])) {return true}
         else if (state.filter.Reply && tweet[1].conversation_id_str !== tweet[1].tweet_id) {return true}
         else if (state.filter.Media && tweet[1].mediaObject && tweet[1].mediaObject.some(x => x.source === 'tweets')) {return true}
         else if (state.filter.Broadcast && ['periscope_broadcast', 'broadcast'].includes(tweet[1].cardObject.type)) {return true}
