@@ -46,7 +46,7 @@ import type {Entity, RichText} from "~/type/Content"
 import {onMounted, PropType, reactive, ref, Ref} from "vue";
 
 const props = defineProps({
-    full_text_origin: {
+    full_text_original: {
         type: String,
         default: ""
     },
@@ -84,14 +84,14 @@ const contentObjectBuilder = () => {
 
     let nextRichText = []
     const fe0f = String.fromCharCode(0xfe0f)
-    let full_text_origin_array = [...props.full_text_origin]
+    let full_text_original_array = [...props.full_text_original]
     if (!props.rich_text_tags || props.rich_text_tags.length === 0) {
         nextRichText.push({
             from_index: 0,
-            to_index: full_text_origin_array.length,
+            to_index: full_text_original_array.length,
             richtext_types: [],
             content: [],
-            text: full_text_origin_array.slice(0, full_text_origin_array.length).join('')
+            text: full_text_original_array.slice(0, full_text_original_array.length).join('')
         })
     } else {
         props.rich_text_tags.forEach((tag, tag_index) => {
@@ -102,20 +102,20 @@ const contentObjectBuilder = () => {
                     to_index: tag.from_index,
                     richtext_types: [],
                     content: [],
-                    text: full_text_origin_array.slice(0, tag.from_index).join('')
+                    text: full_text_original_array.slice(0, tag.from_index).join('')
                 })
             }
             tag.content = []
-            tag.text = full_text_origin_array.slice(tag.from_index, tag.to_index).join('')
+            tag.text = full_text_original_array.slice(tag.from_index, tag.to_index).join('')
             nextRichText.push(tag)
             if (tag_index >= props.rich_text_tags?.length - 1) {
-                if (tag.to_index < full_text_origin_array.length) {
+                if (tag.to_index < full_text_original_array.length) {
                     nextRichText.push({
                         from_index: tag.to_index,
-                        to_index: full_text_origin_array.length,
+                        to_index: full_text_original_array.length,
                         richtext_types: [],
                         content: [],
-                        text: full_text_origin_array.slice(tag.to_index, full_text_origin_array.length).join('')
+                        text: full_text_original_array.slice(tag.to_index, full_text_original_array.length).join('')
                     })
                 }
             } else {
@@ -125,7 +125,7 @@ const contentObjectBuilder = () => {
                         to_index: props.rich_text_tags?.[tag_index + 1].from_index,
                         richtext_types: [],
                         content: [],
-                        text: full_text_origin_array.slice(tag.to_index, props.rich_text_tags?.[tag_index + 1].from_index).join('')
+                        text: full_text_original_array.slice(tag.to_index, props.rich_text_tags?.[tag_index + 1].from_index).join('')
                     })
                 }
             }
@@ -151,7 +151,7 @@ const contentObjectBuilder = () => {
                         expanded_url: "",
                         indices_end: entity.indices_start,
                         indices_start: richItem.from_index,
-                        text: removeHTMLEntities(full_text_origin_array.slice(richItem.from_index, entity.indices_start).join('')),
+                        text: removeHTMLEntities(full_text_original_array.slice(richItem.from_index, entity.indices_start).join('')),
                         type: "text",
                     })
                 }
@@ -163,7 +163,7 @@ const contentObjectBuilder = () => {
                             expanded_url: "",
                             indices_end: richItem.to_index,
                             indices_start: entity.indices_end,
-                            text: removeHTMLEntities(full_text_origin_array.slice(entity.indices_end, richItem.to_index).join('').replace(/ https:\/\/t.co\/[\w]+/, '')),
+                            text: removeHTMLEntities(full_text_original_array.slice(entity.indices_end, richItem.to_index).join('').replace(/ https:\/\/t.co\/[\w]+/, '')),
                             type: "text",
                         })
                     }
@@ -173,7 +173,7 @@ const contentObjectBuilder = () => {
                             expanded_url: "",
                             indices_end: tmpEntities[Number(entity_index) + 1].indices_start,
                             indices_start: entity.indices_end,
-                            text: removeHTMLEntities(full_text_origin_array.slice(entity.indices_end, tmpEntities[Number(entity_index) + 1].indices_start).join('')),
+                            text: removeHTMLEntities(full_text_original_array.slice(entity.indices_end, tmpEntities[Number(entity_index) + 1].indices_start).join('')),
                             type: "text",
                         })
                     }
@@ -184,7 +184,7 @@ const contentObjectBuilder = () => {
                 expanded_url: "",
                 indices_end: richItem.to_index,
                 indices_start: richItem.from_index,
-                text: removeHTMLEntities(full_text_origin_array.slice(richItem.from_index, richItem.to_index).join('').replace(/ https:\/\/t.co\/[\w]+/, '')),
+                text: removeHTMLEntities(full_text_original_array.slice(richItem.from_index, richItem.to_index).join('').replace(/ https:\/\/t.co\/[\w]+/, '')),
                 type: "text",
             })
         }
@@ -196,7 +196,7 @@ onMounted(() => {
     state.textObject = contentObjectBuilder()
 })
 
-const computedFullText = computed(() => props.full_text_origin)
+const computedFullText = computed(() => props.full_text_original)
 
 watch(computedFullText, () => {
     state.textObject = contentObjectBuilder()

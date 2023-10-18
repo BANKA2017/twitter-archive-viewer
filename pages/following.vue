@@ -25,7 +25,7 @@
                         </div>
 
                         <div class="w-full">
-                            <full-text :full_text_origin="accountData.description_origin" :entities="accountData.entities"/>
+                            <full-text :full_text_original="accountData.description_original || accountData.description_origin" :entities="accountData.entities"/>
                         </div>
 
                     </div>

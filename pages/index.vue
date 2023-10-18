@@ -21,7 +21,7 @@
                                 <h5 class="text-lg font-bold">{{ state.info.display_name }}</h5>
                                 <a :href="`https://twitter.com/`+state.info.name" class="block hover:underline-offset-1 hover:underline " target="_blank">@{{ state.info.name }}</a>
                             </div>
-                            <full-text v-if="state.info.description_origin" :full_text_origin="state.info.description_origin" :entities="state.info.description_entities" class="px-5 pb-5"/>
+                            <full-text v-if="state.info.description_original || state.info.description_origin" :full_text_original="state.info.description_original || state.info.description_origin" :entities="state.info.description_entities" class="px-5 pb-5"/>
                         </div>
                         <div class="stats lg:stats-vertical col-span-4 lg:col-span-1 bg-gray-100 dark:bg-gray-900">
                             <div class="stat place-items-center">
@@ -75,7 +75,7 @@
                                     <a :href="`https://twitter.com/i/status/`+tweet.tweet_id" class="hidden md:inline-block hover:underline underline-offset-1 text-sm font-mono" target="_blank"><span class="font-bold mr-1">ID</span>{{ tweet.tweet_id }}</a>
                                 </div>
 
-                                <full-text v-if="!/^https:\/\/t\.co\/\w+$/.test(tweet.full_text)" class="py-2" :entities="tweet.entities" :full_text_origin="tweet.full_text_origin"/>
+                                <full-text v-if="!/^https:\/\/t\.co\/\w+$/.test(tweet.full_text)" class="py-2" :entities="tweet.entities" :full_text_original="tweet.full_text_original || tweet.full_text_origin"/>
                                 <div v-if="tweet.mediaObject && tweet.mediaObject.some(x => x.source === 'tweets')">
                                     <tweet-image :list="tweet.mediaObject.filter(x => x.source === 'tweets' || (tweet.poll && x.source === 'cards'))"/>
                                 </div>
@@ -91,7 +91,7 @@
                                         </div>
                                         <a :href="`https://twitter.com/i/status/`+tweet.quoteObject.tweet_id" class="hover:underline underline-offset-1 text-sm font-mono" target="_blank"><span class="font-bold mr-1">ID</span>{{ tweet.quoteObject.tweet_id }}</a>
                                     </div>
-                                    <full-text v-if="!/^https:\/\/t\.co\/\w+$/.test(tweet.quoteObject.full_text)" class="py-2" :entities="tweet.quoteObject.entities" :full_text_origin="tweet.quoteObject.full_text"/>
+                                    <full-text v-if="!/^https:\/\/t\.co\/\w+$/.test(tweet.quoteObject.full_text)" class="py-2" :entities="tweet.quoteObject.entities" :full_text_original="tweet.quoteObject.full_text"/>
                                     <div v-if="tweet.mediaObject && tweet.mediaObject.some(x => x.source === 'quote_status')">
                                         <tweet-image :list="tweet.mediaObject.filter(x => x.source === 'quote_status')"/>
                                     </div>
